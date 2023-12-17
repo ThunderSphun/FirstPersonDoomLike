@@ -1,13 +1,19 @@
-#include "screen.h"
+#include "screenInternal.h"
 
-SDL_Window* createWindow(const char* title, int width, int height, SDL_WindowFlags flags) {
-	if (!SDL_WasInit(SDL_INIT_EVERYTHING))
-		SDL_Init(SDL_INIT_EVERYTHING);
+window_t createWindow(const char* title, int width, int height, SDL_WindowFlags windowFlags, SDL_RendererFlags rendererFlags) {
+	if (!SDL_WasInit(SDL_INIT_VIDEO))
+		SDL_Init(SDL_INIT_VIDEO);
+	if (!keyEventsInitialized())
+		initKeyEvents();
 
-	return SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
+	SDL_Window* window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, windowFlags);
+	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, rendererFlags);
+	return (window_t) {.window = window, .renderer = renderer};
 }
 
-void destroyWindow(SDL_Window* window) {
-	SDL_DestroyWindow(window);
+void destroyWindow(window_t window) {
+	destroyKeyEvents();
+	SDL_DestroyRenderer(window.renderer);
+	SDL_DestroyWindow(window.window);
 	SDL_Quit();
 }

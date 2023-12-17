@@ -1,26 +1,48 @@
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "screen.h"
 
-int main() {
-	SDL_Window* window = createWindow("New Screen", 720, 480, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALWAYS_ON_TOP);
+void shutdownFromRIGHT(SDL_Keymod modifiers, void* param) {
+	if (modifiers & KMOD_SHIFT)
+		*(bool*)param = false;
+}
 
-	SDL_Event event;
+void shutdownFromESC(SDL_Keymod modifiers, void* param) {
+	*(bool*)param = false;
+}
+
+void shutdownFromQuit(void* param) {
+	*(bool*)param = false;
+}
+
+void printKey(SDL_KeyCode keyCode, SDL_Keymod modifiers, void* param) {
+	printf("pressed %s\n", SDL_GetKeyName(keyCode));
+
+	if (keyCode == SDLK_F12) {
+		printf("swapping to individual keypresses");
+		unregisterGlobalKeyEvents();
+	}
+}
+
+int main() {
+	window_t window = createWindow("New Screen", 720, 480, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	SDL_SetRenderTarget(window.renderer, NULL);
+
 	bool running = true;
+
+	registerSingleKeyEvent(SDLK_ESCAPE, shutdownFromESC, &running);
+	registerSingleKeyEvent(SDLK_RIGHT, shutdownFromRIGHT, &running);
+//	registerGlobalKeyEvents(printKey, NULL);
+
+	registerQuitEvent(shutdownFromQuit, &running);
+
 	while (running) {
-		while (SDL_PollEvent(&event)) {
-			switch (event.type) {
-				case SDL_QUIT: {
-					running = false;
-					break;
-				}
-				case SDL_KEYDOWN: {
-					if (event.key.keysym.sym == SDLK_ESCAPE) running = false;
-					if (event.key.keysym.sym == SDLK_RIGHT) running = false;
-					break;
-				}
-			}
-		}
+		handleAllEvents();
+		SDL_UpdateWindowSurface(window.window);
+
+		SDL_RenderClear(window.renderer);
+		SDL_RenderPresent(window.renderer);
 	}
 
 	destroyWindow(window);
