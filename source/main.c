@@ -1,15 +1,9 @@
-#include <stdio.h>
 #include <stdbool.h>
 
-#define SDL_MAIN_HANDLED
-
-#include "SDL2/SDL.h"
+#include "screen.h"
 
 int main() {
-	SDL_Init(SDL_INIT_EVERYTHING);
-
-	SDL_Window* window = SDL_CreateWindow("New Screen", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 720, 480,
-										  SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALWAYS_ON_TOP);
+	SDL_Window* window = createWindow("New Screen", 720, 480, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALWAYS_ON_TOP);
 
 	SDL_Event event;
 	bool running = true;
@@ -29,9 +23,7 @@ int main() {
 		}
 	}
 
-	SDL_DestroyWindow(window);
-
-	SDL_Quit();
+	destroyWindow(window);
 
 	return 0;
 }

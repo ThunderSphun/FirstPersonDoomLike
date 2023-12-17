@@ -6,7 +6,8 @@ set(CMAKE_C_STANDARD 99)
 # Load SDL2
 add_subdirectory(lib/SDL2)
 
-add_executable(${PROJECT_NAME} source/main.c)
+include_directories(include)
+add_executable(${PROJECT_NAME} source/main.c source/screen/window.c)
 
 # Link SDL2
 target_link_libraries(${PROJECT_NAME} SDL2::SDL2)
