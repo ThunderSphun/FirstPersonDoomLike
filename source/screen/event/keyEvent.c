@@ -107,10 +107,11 @@ void handleKeyEvent(SDL_Event event) {
 	for (int i = 0; i < MAX_KEY_COUNT; i++) {
 		if (keys[i]) {
 			SDL_KeyCode key = SDL_GetKeyFromScancode(i);
+			SDL_KeyCode mappedKey = key & (MAX_KEY_COUNT - 1);
 			if (globalEventStorage.event) {
 				globalEventStorage.event(key, modifier, globalEventStorage.params);
-			} else if (keyEvents[key].event) {
-				keyEvents[key].event(modifier, keyEvents[key].params);
+			} else if (keyEvents[mappedKey].event) {
+				keyEvents[mappedKey].event(modifier, keyEvents[mappedKey].params);
 			}
 		}
 	}

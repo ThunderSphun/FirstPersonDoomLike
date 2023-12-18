@@ -33,7 +33,7 @@ int main() {
 
 	registerSingleKeyEvent(SDLK_ESCAPE, shutdownFromESC, &running);
 	registerSingleKeyEvent(SDLK_RIGHT, shutdownFromRIGHT, &running);
-//	registerGlobalKeyEvents(printKey, NULL);
+	registerGlobalKeyEvents(printKey, NULL);
 
 	registerQuitEvent(shutdownFromQuit, &running);
 
