@@ -1,4 +1,4 @@
-#include "screenInternal.h"
+#include "eventInternal.h"
 
 static struct {
 	quitEvent event;
@@ -18,6 +18,11 @@ void handleAllEvents() {
 			case SDL_KEYDOWN:
 			case SDL_KEYUP: {
 				handleKeyEvent(event);
+				break;
+			}
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP: {
+				handleMouseEvent(event);
 				break;
 			}
 		}

@@ -2,14 +2,6 @@
 #define SCREEN_INTERNAL_H
 
 #include "screen.h"
-
-#pragma region EVENT
-#pragma region KEY_EVENT
-bool keyEventsInitialized();
-void initKeyEvents();
-void destroyKeyEvents();
-void handleKeyEvent(SDL_Event);
-#pragma endregion KEY_EVENT
-#pragma endregion EVENT
+#include "eventInternal.h"
 
 #endif // SCREEN_INTERNAL_H

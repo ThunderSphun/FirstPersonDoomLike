@@ -8,7 +8,11 @@ add_subdirectory(lib/SDL2)
 
 include_directories(include)
 include_directories(include/internal)
-add_executable(${PROJECT_NAME} source/main.c source/screen/window.c source/screen/event/event.c source/screen/event/keyEvent.c)
+add_executable(${PROJECT_NAME}
+		source/main.c
+			source/math/point.c
+			source/screen/window.c
+				source/screen/event/event.c source/screen/event/keyEvent.c source/screen/event/mouseEvent.c)
 
 # Link SDL2
 target_link_libraries(${PROJECT_NAME} SDL2::SDL2)
