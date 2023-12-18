@@ -1,33 +1,26 @@
 #include "screenInternal.h"
 
-#define printf(...) SDL_Log(__VA_ARGS__)
-
-// seems to be slow to respond
-//#define HANDLE_VIA_POLL_EVENT
-
-int MAX_KEY_COUNT;
+#define MAX_KEY_COUNT  0x200
 
 static struct {
 	keyEvent event;
 	void* params;
+	struct {
+		bool wasPressed : 1;
+	};
 } globalEventStorage;
 
 struct keyEvent {
 	singleKeyEvent event;
 	void* params;
-#ifdef HANDLE_VIA_POLL_EVENT
-	bool pressed;
-#endif // HANDLE_VIA_POLL_EVENT
+	struct {
+		bool wasPressed : 1;
+	};
 };
 
 struct keyEvent* keyEvents = NULL;
 
 void initKeyEvents() {
-#ifdef HANDLE_VIA_POLL_EVENT
-	MAX_KEY_COUNT = 0x200;
-#else
-	SDL_GetKeyboardState(&MAX_KEY_COUNT);
-#endif // HANDLE_VIA_POLL_EVENT
 	keyEvents = calloc(MAX_KEY_COUNT, sizeof(struct keyEvent));
 }
 
@@ -49,9 +42,7 @@ bool registerSingleKeyEvent(SDL_KeyCode keyCode, singleKeyEvent event, void* par
 
 	keyEvent->event = event;
 	keyEvent->params = param;
-#ifdef HANDLE_VIA_POLL_EVENT
-	keyEvent->pressed = false;
-#endif // HANDLE_VIA_POLL_EVENT
+	keyEvent->wasPressed = false;
 
 	return returnValue;
 }
@@ -72,9 +63,7 @@ void unregisterSingleKeyEvent(SDL_KeyCode keyCode) {
 
 		event->event = NULL;
 		event->params = NULL;
-#ifdef HANDLE_VIA_POLL_EVENT
-		event->pressed = false;
-#endif // HANDLE_VIA_POLL_EVENT
+		event->wasPressed = false;
 	}
 }
 
@@ -89,31 +78,25 @@ void handleKeyEvent(SDL_Event event) {
 
 	SDL_Keymod modifier = SDL_GetModState();
 
-#ifdef HANDLE_VIA_POLL_EVENT
 	SDL_KeyCode keyCode = event.key.keysym.sym;
 	SDL_KeyCode mappedKeyCode = keyCode & (MAX_KEY_COUNT - 1);
+	struct keyEvent* currentEvent = &keyEvents[mappedKeyCode];
 
 	if (event.type == SDL_KEYDOWN) {
-		if (globalEventStorage.event)
-			globalEventStorage.event(keyCode, modifier, globalEventStorage.params);
-		else if (keyEvents[mappedKeyCode].event)
-			keyEvents[mappedKeyCode].pressed = true;
-	} else if (event.type == SDL_KEYUP && keyEvents[mappedKeyCode].event)
-		keyEvents[mappedKeyCode].pressed = false;
-#else
-	int count;
-	const Uint8* keys = SDL_GetKeyboardState(&count);
-
-	for (int i = 0; i < MAX_KEY_COUNT; i++) {
-		if (keys[i]) {
-			SDL_KeyCode key = SDL_GetKeyFromScancode(i);
-			SDL_KeyCode mappedKey = key & (MAX_KEY_COUNT - 1);
-			if (globalEventStorage.event) {
-				globalEventStorage.event(key, modifier, globalEventStorage.params);
-			} else if (keyEvents[mappedKey].event) {
-				keyEvents[mappedKey].event(modifier, keyEvents[mappedKey].params);
+		if (globalEventStorage.event) {
+			if (!globalEventStorage.wasPressed) {
+				globalEventStorage.wasPressed = globalEventStorage.event(keyCode, modifier, globalEventStorage.params);
+			}
+		} else if (currentEvent->event) {
+			if (!currentEvent->wasPressed) {
+				currentEvent->wasPressed = currentEvent->event(modifier, currentEvent->params);
 			}
 		}
+	} else if (event.type == SDL_KEYUP) {
+		if (globalEventStorage.wasPressed) {
+			globalEventStorage.wasPressed = false;
+		} else if (currentEvent->event) {
+			currentEvent->wasPressed = false;
+		}
 	}
-#endif // HANDLE_VIA_POLL_EVENT
 }

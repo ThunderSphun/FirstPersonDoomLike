@@ -3,26 +3,34 @@
 
 #include "screen.h"
 
-void shutdownFromRIGHT(SDL_Keymod modifiers, void* param) {
+bool shutdownFromRIGHT(SDL_Keymod modifiers, void* param) {
 	if (modifiers & KMOD_SHIFT)
 		*(bool*)param = false;
+
+	return true;
 }
 
-void shutdownFromESC(SDL_Keymod modifiers, void* param) {
+bool shutdownFromESC(SDL_Keymod modifiers, void* param) {
 	*(bool*)param = false;
+
+	return false;
 }
 
-void shutdownFromQuit(void* param) {
+bool shutdownFromQuit(void* param) {
 	*(bool*)param = false;
+
+	return true;
 }
 
-void printKey(SDL_KeyCode keyCode, SDL_Keymod modifiers, void* param) {
+bool printKey(SDL_KeyCode keyCode, SDL_Keymod modifiers, void* param) {
 	printf("pressed %s\n", SDL_GetKeyName(keyCode));
 
 	if (keyCode == SDLK_F12) {
 		printf("swapping to individual keypresses");
 		unregisterGlobalKeyEvents();
 	}
+
+	return true;
 }
 
 int main() {

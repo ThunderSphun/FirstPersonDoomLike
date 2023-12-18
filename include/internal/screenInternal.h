@@ -1,7 +1,6 @@
 #ifndef SCREEN_INTERNAL_H
 #define SCREEN_INTERNAL_H
 
-#include <stdbool.h>
 #include "screen.h"
 
 #pragma region EVENT

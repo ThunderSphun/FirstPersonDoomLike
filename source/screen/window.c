@@ -2,7 +2,9 @@
 
 window_t createWindow(const char* title, int width, int height, SDL_WindowFlags windowFlags, SDL_RendererFlags rendererFlags) {
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
-		SDL_Init(SDL_INIT_VIDEO);
+		SDL_InitSubSystem(SDL_INIT_VIDEO);
+	if (!SDL_WasInit(SDL_INIT_EVENTS))
+		SDL_InitSubSystem(SDL_INIT_EVENTS);
 	if (!keyEventsInitialized())
 		initKeyEvents();
 
