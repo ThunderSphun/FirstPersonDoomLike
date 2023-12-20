@@ -21,7 +21,9 @@ void handleAllEvents() {
 				break;
 			}
 			case SDL_MOUSEBUTTONDOWN:
-			case SDL_MOUSEBUTTONUP: {
+			case SDL_MOUSEBUTTONUP:
+			case SDL_MOUSEMOTION:
+			case SDL_MOUSEWHEEL: {
 				handleMouseEvent(event);
 				break;
 			}

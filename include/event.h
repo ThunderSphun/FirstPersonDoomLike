@@ -42,18 +42,41 @@ void unregisterSingleKeyEvent(SDL_KeyCode keyCode);
 void unregisterGlobalKeyEvents();
 #pragma endregion KEY_EVENT
 #pragma region MOUSE_EVENT
+#define SDL_BUTTON_NONE 6
+#define SDL_BUTTON_NMASK SDL_BUTTON(SDL_BUTTON_NONE)
+
 /**
  * An event callback for the event `SDL_MOUSEBUTTONDOWN` or `SDL_MOUSEBUTTONUP`
  * @retval whether it should repeat
  */
 typedef bool (*singleMouseButtonEvent)(void* param);
+/**
+ * An event callback for the event `SDL_MOUSEBUTTONDOWN` or `SDL_MOUSEBUTTONUP`
+ * @param button the mouse button pressed for this event
+ * @retval whether it should repeat
+ */
 typedef bool (*mouseButtonEvent)(int button, void* param);
+/**
+ * An event callback for the event `SDL_MouseMotionEvent`
+ * @param from the previous location of the mouse
+ * @param to the current location of the mouse
+ */
+typedef void (*mouseMoveEvent)(pointI2_t from, pointI2_t to, void* param);
+/**
+ * An event callback for the event `SDL_MouseWheelEvent`
+ * @param amount the amount of movement
+ */
+typedef void (*mouseScrollEvent)(float amount, void * param);
 
 bool registerSingleMouseClickEvent(int mouseButton, singleMouseButtonEvent event, void* param);
 bool registerGlobalMouseClickEvents(mouseButtonEvent event, void* param);
+bool registerMouseMoveEvent(mouseMoveEvent event, void* param);
+bool registerMouseScrollEvent(mouseScrollEvent event, void* param);
 
 void unregisterSingleMouseClickEvent(int mouseButton);
 void unregisterGlobalMouseClickEvents();
+void unregisterMouseMoveEvent();
+void unregisterMouseScrollEvent();
 
 pointI2_t getCurrentMousePos();
 

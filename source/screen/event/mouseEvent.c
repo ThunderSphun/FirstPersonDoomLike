@@ -8,7 +8,18 @@ static struct {
 	struct {
 		bool wasPressed : 1;
 	};
-} globalEventStorage;
+} globalMousePressedEventStorage;
+
+static struct {
+	mouseMoveEvent event;
+	pointI2_t prevPos;
+	void* params;
+} globalMouseMovedEventStorage;
+
+static struct {
+	mouseScrollEvent event;
+	void* params;
+} globalMouseScrolledEventStorage;
 
 struct mouseEvent {
 	singleMouseButtonEvent event;
@@ -48,12 +59,33 @@ bool registerSingleMouseClickEvent(int mouseButton, singleMouseButtonEvent event
 }
 
 bool registerGlobalMouseClickEvents(mouseButtonEvent event, void* param) {
-	if (!keyEventsInitialized())
+	if (!mouseEventsInitialized())
 		return false;
 
-	bool returnValue = globalEventStorage.event;
-	globalEventStorage.event = event;
-	globalEventStorage.params = param;
+	bool returnValue = globalMousePressedEventStorage.event;
+	globalMousePressedEventStorage.event = event;
+	globalMousePressedEventStorage.params = param;
+	return returnValue;
+}
+
+bool registerMouseMoveEvent(mouseMoveEvent event, void* param) {
+	if (!mouseEventsInitialized())
+		return false;
+
+	bool returnValue = globalMousePressedEventStorage.event;
+	globalMouseMovedEventStorage.event = event;
+	globalMouseMovedEventStorage.params = param;
+	return returnValue;
+}
+
+bool registerMouseScrollEvent(mouseScrollEvent event, void* param) {
+	if (!mouseEventsInitialized())
+		return false;
+
+	bool returnValue = globalMousePressedEventStorage.event;
+	globalMouseScrolledEventStorage.event = event;
+	globalMouseScrolledEventStorage.params = param;
+	globalMouseMovedEventStorage.prevPos = getCurrentMousePos();
 	return returnValue;
 }
 
@@ -68,10 +100,21 @@ void unregisterSingleMouseClickEvent(int mouseButton) {
 }
 
 void unregisterGlobalMouseClickEvents() {
-	globalEventStorage.event = NULL;
-	globalEventStorage.params = NULL;
+	globalMousePressedEventStorage.event = NULL;
+	globalMousePressedEventStorage.params = NULL;
+	globalMousePressedEventStorage.wasPressed = false;
 }
 
+void unregisterMouseMoveEvent() {
+	globalMouseMovedEventStorage.event = NULL;
+	globalMouseMovedEventStorage.params = NULL;
+	globalMouseMovedEventStorage.prevPos = int2(0, 0);
+}
+
+void unregisterMouseScrollEvent() {
+	globalMouseScrolledEventStorage.event = NULL;
+	globalMouseScrolledEventStorage.params = NULL;
+}
 
 void handleMouseEvent(SDL_Event event) {
 	if (!mouseEventsInitialized())
@@ -80,21 +123,41 @@ void handleMouseEvent(SDL_Event event) {
 	int button = event.button.button;
 	struct mouseEvent* currentEvent = &mouseEvents[button];
 
-	if (event.button.type == SDL_MOUSEBUTTONDOWN) {
-		if (globalEventStorage.event) {
-			if (!globalEventStorage.wasPressed) {
-				globalEventStorage.wasPressed = globalEventStorage.event(button, globalEventStorage.params);
+	switch (event.type) {
+		case SDL_MOUSEBUTTONDOWN: {
+			if (globalMousePressedEventStorage.event) {
+				if (!globalMousePressedEventStorage.wasPressed)
+					globalMousePressedEventStorage.wasPressed =
+							globalMousePressedEventStorage.event(button, globalMousePressedEventStorage.params);
+			} else if (currentEvent->event) {
+				if (!currentEvent->wasPressed)
+					currentEvent->wasPressed = currentEvent->event(currentEvent->params);
 			}
-		} else if (currentEvent->event) {
-			if (!currentEvent->wasPressed) {
-				currentEvent->wasPressed = currentEvent->event(currentEvent->params);
-			}
+			break;
 		}
-	} else if (event.button.type == SDL_MOUSEBUTTONUP) {
-		if (globalEventStorage.wasPressed) {
-			globalEventStorage.wasPressed = false;
-		} else if (currentEvent->event) {
-			currentEvent->wasPressed = false;
+		case SDL_MOUSEBUTTONUP: {
+			if (globalMousePressedEventStorage.wasPressed) {
+				globalMousePressedEventStorage.event(SDL_BUTTON_NONE, globalMousePressedEventStorage.params);
+				globalMousePressedEventStorage.wasPressed = false;
+			}
+			else if (currentEvent->event)
+				currentEvent->wasPressed = false;
+			break;
+		}
+		case SDL_MOUSEMOTION: {
+			pointI2_t currentPos = getCurrentMousePos();
+			if (globalMouseMovedEventStorage.event)
+				globalMouseMovedEventStorage.event(
+						globalMouseMovedEventStorage.prevPos,
+						currentPos,
+						globalMouseMovedEventStorage.params);
+			globalMouseMovedEventStorage.prevPos = currentPos;
+			break;
+		}
+		case SDL_MOUSEWHEEL: {
+			if (globalMouseScrolledEventStorage.event)
+				globalMouseScrolledEventStorage.event(event.wheel.preciseY, globalMouseScrolledEventStorage.params);
+			break;
 		}
 	}
 }

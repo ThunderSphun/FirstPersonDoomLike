@@ -47,10 +47,14 @@ bool printMouseButton(int button, void* param) {
 	if (button == SDL_BUTTON_MIDDLE) mouseButton = "middle mouse button";
 	if (button == SDL_BUTTON_X1) mouseButton = "backward mouse button";
 	if (button == SDL_BUTTON_X2) mouseButton = "forward mouse button";
+	if (button == SDL_BUTTON_NONE) mouseButton = "no mouse button";
 
 	pointI2_t pos = getCurrentMousePos();
 
 	printf("pressed %s at %s\n", mouseButton, toString(pos));
+
+	if (button == SDL_BUTTON_LEFT) *(bool*) param = true;
+	if (button == SDL_BUTTON_NONE) *(bool*) param = false;
 
 	if (button == SDL_BUTTON_X1) {
 		printf("swapping to individual keypresses\n");
@@ -58,6 +62,15 @@ bool printMouseButton(int button, void* param) {
 	}
 
 	return true;
+}
+
+void mouseMoved(pointI2_t from, pointI2_t to, void* param) {
+	if (*(bool*) param)
+		printf("moved to %s\n", toString(from));
+}
+
+void printScroll(float amount, void* param) {
+	printf("scrolled %f units\n", amount);
 }
 
 int main() {
@@ -70,8 +83,11 @@ int main() {
 	registerSingleKeyEvent(SDLK_RIGHT, shutdownFromRIGHT, &running);
 	registerGlobalKeyEvents(printKey, NULL);
 
+	bool logging = false;
 	registerSingleMouseClickEvent(SDL_BUTTON_LEFT, printLeftClick, NULL);
-	registerGlobalMouseClickEvents(printMouseButton, NULL);
+	registerGlobalMouseClickEvents(printMouseButton, &logging);
+	registerMouseMoveEvent(mouseMoved, &logging);
+	registerMouseScrollEvent(printScroll, NULL);
 
 	registerQuitEvent(shutdownFromQuit, &running);
 
