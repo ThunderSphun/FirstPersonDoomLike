@@ -99,12 +99,10 @@ void handleMouseEvent(SDL_Event event) {
 	}
 }
 
-pointI2_t getCurrentMousePos(window_t window) {
+pointI2_t getCurrentMousePos() {
 	pointI2_t mousePos = int2(0, 0);
-	pointI2_t windowPos = int2(0, 0);
 
 	SDL_GetMouseState(&mousePos.x, &mousePos.y);
-	SDL_GetWindowPosition(window.window, &windowPos.x, &windowPos.y);
 
-	return subI2I2(mousePos, windowPos);
+	return mousePos;
 }

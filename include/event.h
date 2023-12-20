@@ -4,7 +4,6 @@
 #include <stdbool.h>
 
 #include "sdl2_wrapper.h"
-#include "screen.h"
 #include "point.h"
 
 #pragma region EVENT
@@ -56,7 +55,7 @@ bool registerGlobalMouseClickEvents(mouseButtonEvent event, void* param);
 void unregisterSingleMouseClickEvent(int mouseButton);
 void unregisterGlobalMouseClickEvents();
 
-pointI2_t getCurrentMousePos(window_t window);
+pointI2_t getCurrentMousePos();
 
 #pragma endregion MOUSE_EVENT
 #pragma endregion EVENT

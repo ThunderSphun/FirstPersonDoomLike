@@ -4,6 +4,7 @@
 #include "screen.h"
 #include "event.h"
 #include "point.h"
+#include "cast.h"
 
 bool shutdownFromRIGHT(SDL_Keymod modifiers, void* param) {
 	if (modifiers & KMOD_SHIFT)
@@ -47,9 +48,9 @@ bool printMouseButton(int button, void* param) {
 	if (button == SDL_BUTTON_X1) mouseButton = "backward mouse button";
 	if (button == SDL_BUTTON_X2) mouseButton = "forward mouse button";
 
-	pointI2_t pos = getCurrentMousePos(*(window_t *)param);
+	pointI2_t pos = getCurrentMousePos();
 
-	printf("pressed %s at (%i, %i)\n", mouseButton, pos.x, pos.y);
+	printf("pressed %s at %s\n", mouseButton, toString(pos));
 
 	if (button == SDL_BUTTON_X1) {
 		printf("swapping to individual keypresses\n");
@@ -70,7 +71,7 @@ int main() {
 	registerGlobalKeyEvents(printKey, NULL);
 
 	registerSingleMouseClickEvent(SDL_BUTTON_LEFT, printLeftClick, NULL);
-	registerGlobalMouseClickEvents(printMouseButton, &window);
+	registerGlobalMouseClickEvents(printMouseButton, NULL);
 
 	registerQuitEvent(shutdownFromQuit, &running);
 
