@@ -57,13 +57,13 @@ typedef bool (*singleMouseButtonEvent)(void* param);
  */
 typedef bool (*mouseButtonEvent)(int button, void* param);
 /**
- * An event callback for the event `SDL_MouseMotionEvent`
+ * An event callback for the event `SDL_MOUSEMOTION`
  * @param from the previous location of the mouse
  * @param to the current location of the mouse
  */
 typedef void (*mouseMoveEvent)(pointI2_t from, pointI2_t to, void* param);
 /**
- * An event callback for the event `SDL_MouseWheelEvent`
+ * An event callback for the event `SDL_MOUSEWHEEL`
  * @param amount the amount of movement
  */
 typedef void (*mouseScrollEvent)(float amount, void * param);
