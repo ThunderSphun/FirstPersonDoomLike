@@ -31,7 +31,13 @@ enable_testing()
 
 add_subdirectory(lib/unity)
 
-add_executable(testCast test/test_cast.c ${SOURCE_FILES})
-target_link_libraries(testCast unity)
-target_link_libraries(testCast SDL2::SDL2)
-add_test(NAME testCast COMMAND testCast)
+function(create_unit_test test_name test_file)
+	add_executable(${test_name} ${test_file} ${SOURCE_FILES})
+	target_include_directories(${test_name} PRIVATE test/include)
+	target_link_libraries(${test_name} unity)
+	target_link_libraries(${test_name} SDL2::SDL2)
+	add_test(NAME ${test_name} COMMAND ${test_name})
+endfunction()
+
+create_unit_test(testCast test/test_cast.c)
+create_unit_test(testPoint test/test_point.c)

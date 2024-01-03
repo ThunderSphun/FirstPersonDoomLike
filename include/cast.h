@@ -4,7 +4,7 @@
 // TODO make it work with not including other lib files
 #include "point.h"
 
-#define CAST(_a, type) (*((type*)&_a))
+#define CAST(_a, type) (*((type*)&(_a)))
 #define CAST_FROM(_a, from, to) from : (to) CAST(_a, from)
 
 #define toFloat(_a) ({                                          \
@@ -61,12 +61,12 @@
         CAST_FROM(__a, double, unsigned int),                   \
         CAST_FROM(__a, long double, unsigned int),              \
         pointF2_t : (pointU2_t) {                               \
-            .x = CAST(__a, pointF2_t).x,                        \
-            .y = CAST(__a, pointF2_t).y},                       \
+            .x = (float) (CAST(__a, pointF2_t).x),              \
+            .y = (float) (CAST(__a, pointF2_t).y)},             \
         pointF3_t : (pointU3_t) {                               \
-            .x = CAST(__a, pointF3_t).x,                        \
-            .y = CAST(__a, pointF3_t).y,                        \
-            .z = CAST(__a, pointF3_t).z}                        \
+            .x = (float) (CAST(__a, pointF3_t).x),              \
+            .y = (float) (CAST(__a, pointF3_t).y),              \
+            .z = (float) (CAST(__a, pointF3_t).z)}              \
     );                                                          \
 })
 

@@ -1,10 +1,11 @@
 #include "cast.h"
 
-#include "unity.h"
+#include "unity_wrapper.h"
 #include <float.h>
 
 // included to prevent compilation error in some cases
 void setUp(void) {}
+
 void tearDown(void) {}
 
 void test_canCastWithoutPointIncluded() {
@@ -23,8 +24,8 @@ void test_canCastWithPointIncluded() {
 }
 
 void test_canCastSignedByteToFloat() {
-	const signed char a = 0;
-	const signed char b = 1;
+	const signed char a = +0;
+	const signed char b = +1;
 	const signed char c = -1;
 	const signed char d = INT8_MAX;
 	const signed char e = INT8_MIN;
@@ -37,8 +38,8 @@ void test_canCastSignedByteToFloat() {
 }
 
 void test_canCastByteToFloat() {
-	const char a = 0;
-	const char b = 1;
+	const char a = +0;
+	const char b = +1;
 	const char c = -1;
 	const char d = INT8_MAX;
 	const char e = INT8_MIN;
@@ -51,8 +52,8 @@ void test_canCastByteToFloat() {
 }
 
 void test_canCastUnsignedByteToFloat() {
-	const unsigned char a = 0;
-	const unsigned char b = 1;
+	const unsigned char a = +0;
+	const unsigned char b = +1;
 	const unsigned char c = -1;
 	const unsigned char d = INT8_MAX;
 	const unsigned char e = INT8_MIN;
@@ -67,8 +68,8 @@ void test_canCastUnsignedByteToFloat() {
 }
 
 void test_canCastSignedShortToFloat() {
-	const signed short a = 0;
-	const signed short b = 1;
+	const signed short a = +0;
+	const signed short b = +1;
 	const signed short c = -1;
 	const signed short d = INT16_MAX;
 	const signed short e = INT16_MIN;
@@ -81,8 +82,8 @@ void test_canCastSignedShortToFloat() {
 }
 
 void test_canCastUnsignedShortToFloat() {
-	const unsigned short a = 0;
-	const unsigned short b = 1;
+	const unsigned short a = +0;
+	const unsigned short b = +1;
 	const unsigned short c = -1;
 	const unsigned short d = INT16_MAX;
 	const unsigned short e = INT16_MIN;
@@ -97,8 +98,8 @@ void test_canCastUnsignedShortToFloat() {
 }
 
 void test_canCastSignedIntToFloat() {
-	const signed int a = 0;
-	const signed int b = 1;
+	const signed int a = +0;
+	const signed int b = +1;
 	const signed int c = -1;
 	const signed int d = INT32_MAX;
 	const signed int e = INT32_MIN;
@@ -111,8 +112,8 @@ void test_canCastSignedIntToFloat() {
 }
 
 void test_canCastUnsignedIntToFloat() {
-	const unsigned int a = 0;
-	const unsigned int b = 1;
+	const unsigned int a = +0;
+	const unsigned int b = +1;
 	const unsigned int c = -1;
 	const unsigned int d = INT32_MAX;
 	const unsigned int e = INT32_MIN;
@@ -127,8 +128,8 @@ void test_canCastUnsignedIntToFloat() {
 }
 
 void test_canCastSignedLongToFloat() {
-	const signed long a = 0;
-	const signed long b = 1;
+	const signed long a = +0;
+	const signed long b = +1;
 	const signed long c = -1;
 	const signed long d = (signed long) INT64_MAX;
 	const signed long e = (signed long) INT64_MIN;
@@ -141,8 +142,8 @@ void test_canCastSignedLongToFloat() {
 }
 
 void test_canCastUnsignedLongToFloat() {
-	const unsigned long a = 0;
-	const unsigned long b = 1;
+	const unsigned long a = +0;
+	const unsigned long b = +1;
 	const unsigned long c = -1;
 	const unsigned long d = (unsigned long) INT64_MAX;
 	const unsigned long e = (unsigned long) INT64_MIN;
@@ -157,8 +158,8 @@ void test_canCastUnsignedLongToFloat() {
 }
 
 void test_canCastSignedLongLongToFloat() {
-	const signed long long a = 0;
-	const signed long long b = 1;
+	const signed long long a = +0;
+	const signed long long b = +1;
 	const signed long long c = -1;
 	const signed long long d = INT64_MAX;
 	const signed long long e = INT64_MIN;
@@ -171,8 +172,8 @@ void test_canCastSignedLongLongToFloat() {
 }
 
 void test_canCastUnsignedLongLongToFloat() {
-	const unsigned long long a = 0;
-	const unsigned long long b = 1;
+	const unsigned long long a = +0;
+	const unsigned long long b = +1;
 	const unsigned long long c = -1;
 	const unsigned long long d = INT64_MAX;
 	const unsigned long long e = INT64_MIN;
@@ -187,15 +188,15 @@ void test_canCastUnsignedLongLongToFloat() {
 }
 
 void test_canCastFloatToInt() {
-	const float a = 0.0f;
+	const float a = +0.0f;
 	const float b = -0.0f;
-	const float c = 1.0f;
+	const float c = +1.0f;
 	const float d = -1.0f;
 	const float e = FLT_MIN;
 	const float f = FLT_MAX;
-	const float g = HUGE_VALF;	//  inf
-	const float h = -HUGE_VALF;	// -inf
-	const float i = NAN;		//  nan
+	const float g = HUGE_VALF; // inf
+	const float h = -HUGE_VALF; // -inf
+	const float i = NAN; // nan
 
 	TEST_ASSERT_EQUAL_INT32_MESSAGE((int) a, toInt(a), "a");
 	TEST_ASSERT_EQUAL_INT32_MESSAGE((int) b, toInt(b), "b");
@@ -209,15 +210,15 @@ void test_canCastFloatToInt() {
 }
 
 void test_canCastDoubleToInt() {
-	const double a = 0.0;
+	const double a = +0.0;
 	const double b = -0.0;
-	const double c = 1.0;
+	const double c = +1.0;
 	const double d = -1.0;
 	const double e = DBL_MIN;
 	const double f = DBL_MAX;
-	const double g = HUGE_VAL;	//  inf
-	const double h = -HUGE_VAL;	// -inf
-	const double i = NAN;		//  nan
+	const double g = HUGE_VAL; // inf
+	const double h = -HUGE_VAL; // -inf
+	const double i = NAN; // nan
 
 	TEST_ASSERT_EQUAL_INT32_MESSAGE((int) a, toInt(a), "a");
 	TEST_ASSERT_EQUAL_INT32_MESSAGE((int) b, toInt(b), "b");
@@ -231,15 +232,15 @@ void test_canCastDoubleToInt() {
 }
 
 void test_canCastLongDoubleToInt() {
-	const long double a = 0.0l;
+	const long double a = +0.0l;
 	const long double b = -0.0l;
-	const long double c = 1.0l;
+	const long double c = +1.0l;
 	const long double d = -1.0l;
 	const long double e = LDBL_MIN;
 	const long double f = LDBL_MAX;
-	const long double g = HUGE_VALL;	//  inf
-	const long double h = -HUGE_VALL;	// -inf
-	const long double i = NAN;			//  nan
+	const long double g = HUGE_VALL; // inf
+	const long double h = -HUGE_VALL; // -inf
+	const long double i = NAN; // nan
 
 	TEST_ASSERT_EQUAL_INT32_MESSAGE((int) a, toInt(a), "a");
 	TEST_ASSERT_EQUAL_INT32_MESSAGE((int) b, toInt(b), "b");
@@ -253,13 +254,15 @@ void test_canCastLongDoubleToInt() {
 }
 
 void test_canCastFloatToUnsignedInt() {
-	const float a = 0.0f;
+	const float a = +0.0f;
 	const float b = -0.0f;
-	const float c = 1.0f;
+	const float c = +1.0f;
 	const float d = -1.0f;
-	const float e = HUGE_VALF;	//  inf
-	const float f = -HUGE_VALF;	// -inf
-	const float g = NAN;		//  nan
+	const float e = FLT_MIN;
+	const float f = FLT_MAX;
+	const float g = HUGE_VALF; // inf
+	const float h = -HUGE_VALF; // -inf
+	const float i = NAN; // nan
 
 	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) a, toUInt(a), "a");
 	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) b, toUInt(b), "b");
@@ -268,16 +271,20 @@ void test_canCastFloatToUnsignedInt() {
 	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) e, toUInt(e), "e");
 	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) f, toUInt(f), "f");
 	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) g, toUInt(g), "g");
+	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) h, toUInt(h), "h");
+	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) i, toUInt(i), "i");
 }
 
 void test_canCastDoubleToUnsignedInt() {
-	const double a = 0.0f;
-	const double b = -0.0f;
-	const double c = 1.0f;
-	const double d = -1.0f;
-	const double e = HUGE_VAL;	//  inf
-	const double f = -HUGE_VAL;	// -inf
-	const double g = NAN;		//  nan
+	const double a = +0.0;
+	const double b = -0.0;
+	const double c = +1.0;
+	const double d = -1.0;
+	const double e = DBL_MIN;
+	const double f = DBL_MAX;
+	const double g = HUGE_VAL; // inf
+	const double h = -HUGE_VAL; // -inf
+	const double i = NAN; // nan
 
 	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) a, toUInt(a), "a");
 	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) b, toUInt(b), "b");
@@ -286,16 +293,20 @@ void test_canCastDoubleToUnsignedInt() {
 	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) e, toUInt(e), "e");
 	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) f, toUInt(f), "f");
 	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) g, toUInt(g), "g");
+	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) h, toUInt(h), "h");
+	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) i, toUInt(i), "i");
 }
 
 void test_canCastLongDoubleToUnsignedInt() {
-	const long double a = 0.0f;
-	const long double b = -0.0f;
-	const long double c = 1.0f;
-	const long double d = -1.0f;
-	const long double e = HUGE_VALL;	//  inf
-	const long double f = -HUGE_VALL;	// -inf
-	const long double g = NAN;			//  nan
+	const long double a = +0.0l;
+	const long double b = -0.0l;
+	const long double c = +1.0l;
+	const long double d = -1.0l;
+	const long double e = LDBL_MIN;
+	const long double f = LDBL_MAX;
+	const long double g = HUGE_VALL; // inf
+	const long double h = -HUGE_VALL; // -inf
+	const long double i = NAN; // nan
 
 	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) a, toUInt(a), "a");
 	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) b, toUInt(b), "b");
@@ -304,45 +315,41 @@ void test_canCastLongDoubleToUnsignedInt() {
 	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) e, toUInt(e), "e");
 	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) f, toUInt(f), "f");
 	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) g, toUInt(g), "g");
+	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) h, toUInt(h), "h");
+	TEST_ASSERT_EQUAL_UINT_MESSAGE((unsigned int) i, toUInt(i), "i");
 }
 
 void test_canCastInt2ToFloat2() {
-	pointI2_t i2 = int2(1, 2);
-	pointF2_t f2 = toFloat(i2);
+	pointI2_t i_a = int2(1, 2);
+	pointF2_t f_a = toFloat(i_a);
 
-	TEST_ASSERT_EQUAL_MESSAGE(1.0f, f2.x, "f2.x");
-	TEST_ASSERT_EQUAL_MESSAGE(2.0f, f2.y, "f2.y");
+	TEST_ASSERT_EQUAL_FLOAT2(float2((float) i_a.x, (float) i_a.y), f_a);
 }
 
 void test_canCastInt3ToFloat3() {
-	pointI3_t i3 = int3(1, 2, 3);
-	pointF3_t f3 = toFloat(i3);
+	pointI3_t i_a = int3(1, 2, 3);
+	pointF3_t f_a = toFloat(i_a);
 
-	TEST_ASSERT_EQUAL_MESSAGE(1.0f, f3.x, "f3.x");
-	TEST_ASSERT_EQUAL_MESSAGE(2.0f, f3.y, "f3.y");
-	TEST_ASSERT_EQUAL_MESSAGE(3.0f, f3.z, "f3.z");
+	TEST_ASSERT_EQUAL_FLOAT3(float3((float) i_a.x, (float) i_a.y, (float) i_a.z), f_a);
 }
 
 void test_canCastUInt2ToFloat2() {
-	pointU2_t u2 = uint2(1, 2);
-	pointF2_t f2 = toFloat(u2);
+	pointU2_t u_a = uint2(1, 2);
+	pointF2_t f_a = toFloat(u_a);
 
-	TEST_ASSERT_EQUAL_MESSAGE(1.0f, f2.x, "f2.x");
-	TEST_ASSERT_EQUAL_MESSAGE(2.0f, f2.y, "f2.y");
+	TEST_ASSERT_EQUAL_FLOAT2(float2((float) u_a.x, (float) u_a.y), f_a);
 }
 
 void test_canCastUInt3ToFloat3() {
-	pointU3_t u3 = uint3(1, 2, 3);
-	pointF3_t f3 = toFloat(u3);
+	pointU3_t u_a = uint3(1, 2, 3);
+	pointF3_t f_a = toFloat(u_a);
 
-	TEST_ASSERT_EQUAL_MESSAGE(1.0f, f3.x, "f3.x");
-	TEST_ASSERT_EQUAL_MESSAGE(2.0f, f3.y, "f3.y");
-	TEST_ASSERT_EQUAL_MESSAGE(3.0f, f3.z, "f3.z");
+	TEST_ASSERT_EQUAL_FLOAT3(float3((float) u_a.x, (float) u_a.y, (float) u_a.z), f_a);
 }
 
 void test_canCastFloat2ToInt2() {
-	const pointF2_t f_a = float2( 1.0f,  2.0f);
-	const pointF2_t f_b = float2( 1.5f,  2.5f);
+	const pointF2_t f_a = float2(+1.0f, +2.0f);
+	const pointF2_t f_b = float2(+1.5f, +2.5f);
 	const pointF2_t f_c = float2(-1.0f, -2.0f);
 	const pointF2_t f_d = float2(-1.5f, -2.5f);
 	const pointI2_t i_a = toInt(f_a);
@@ -350,19 +357,15 @@ void test_canCastFloat2ToInt2() {
 	const pointI2_t i_c = toInt(f_c);
 	const pointI2_t i_d = toInt(f_d);
 
-	TEST_ASSERT_EQUAL_INT32_MESSAGE( 1, i_a.x, "i_a.x");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE( 2, i_a.y, "i_a.y");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE( 1, i_b.x, "i_b.x");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE( 2, i_b.y, "i_b.y");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE(-1, i_c.x, "i_c.x");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE(-2, i_c.y, "i_c.y");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE(-1, i_d.x, "i_d.x");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE(-2, i_d.y, "i_d.y");
+	TEST_ASSERT_EQUAL_INT2_MESSAGE(int2((signed int) f_a.x, (signed int) f_a.y), i_a, "i_a");
+	TEST_ASSERT_EQUAL_INT2_MESSAGE(int2((signed int) f_b.x, (signed int) f_b.y), i_b, "i_b");
+	TEST_ASSERT_EQUAL_INT2_MESSAGE(int2((signed int) f_c.x, (signed int) f_c.y), i_c, "i_c");
+	TEST_ASSERT_EQUAL_INT2_MESSAGE(int2((signed int) f_d.x, (signed int) f_d.y), i_d, "i_d");
 }
 
 void test_canCastFloat2ToUInt2() {
-	const pointF2_t f_a = float2( 1.0f,  2.0f);
-	const pointF2_t f_b = float2( 1.5f,  2.5f);
+	const pointF2_t f_a = float2(+1.0f, +2.0f);
+	const pointF2_t f_b = float2(+1.5f, +2.5f);
 	const pointF2_t f_c = float2(-1.0f, -2.0f);
 	const pointF2_t f_d = float2(-1.5f, -2.5f);
 	const pointU2_t u_a = toUInt(f_a);
@@ -370,19 +373,15 @@ void test_canCastFloat2ToUInt2() {
 	const pointU2_t u_c = toUInt(f_c);
 	const pointU2_t u_d = toUInt(f_d);
 
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE( 1, u_a.x, "u_a.x");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE( 2, u_a.y, "u_a.y");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE( 1, u_b.x, "u_b.x");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE( 2, u_b.y, "u_b.y");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE(-1, u_c.x, "u_c.x");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE(-2, u_c.y, "u_c.y");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE(-1, u_d.x, "u_d.x");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE(-2, u_d.y, "u_d.y");
+	TEST_ASSERT_EQUAL_UINT2_MESSAGE(uint2((unsigned int) f_a.x, (unsigned int) f_a.y), u_a, "u_a");
+	TEST_ASSERT_EQUAL_UINT2_MESSAGE(uint2((unsigned int) f_b.x, (unsigned int) f_b.y), u_b, "u_b");
+	TEST_ASSERT_EQUAL_UINT2_MESSAGE(uint2((unsigned int) f_c.x, (unsigned int) f_c.y), u_c, "u_c");
+	TEST_ASSERT_EQUAL_UINT2_MESSAGE(uint2((unsigned int) f_d.x, (unsigned int) f_d.y), u_d, "u_d");
 }
 
 void test_canCastFloat3ToInt3() {
-	const pointF3_t f_a = float3( 1.0f,  2.0f,  3.0f);
-	const pointF3_t f_b = float3( 1.5f,  2.5f,  3.5f);
+	const pointF3_t f_a = float3(+1.0f, +2.0f, +3.0f);
+	const pointF3_t f_b = float3(+1.5f, +2.5f, +3.5f);
 	const pointF3_t f_c = float3(-1.0f, -2.0f, -3.0f);
 	const pointF3_t f_d = float3(-1.5f, -2.5f, -3.5f);
 	const pointI3_t i_a = toInt(f_a);
@@ -390,23 +389,15 @@ void test_canCastFloat3ToInt3() {
 	const pointI3_t i_c = toInt(f_c);
 	const pointI3_t i_d = toInt(f_d);
 
-	TEST_ASSERT_EQUAL_INT32_MESSAGE( 1, i_a.x, "i_a.x");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE( 2, i_a.y, "i_a.y");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE( 3, i_a.z, "i_a.z");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE( 1, i_b.x, "i_b.x");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE( 2, i_b.y, "i_b.y");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE( 3, i_b.z, "i_b.z");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE(-1, i_c.x, "i_c.x");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE(-2, i_c.y, "i_c.y");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE(-3, i_c.z, "i_c.z");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE(-1, i_d.x, "i_d.x");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE(-2, i_d.y, "i_d.y");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE(-3, i_d.z, "i_d.z");
+	TEST_ASSERT_EQUAL_INT3_MESSAGE(int3((signed int) f_a.x, (signed int) f_a.y, (signed int) f_a.z), i_a, "i_a");
+	TEST_ASSERT_EQUAL_INT3_MESSAGE(int3((signed int) f_b.x, (signed int) f_b.y, (signed int) f_b.z), i_b, "i_b");
+	TEST_ASSERT_EQUAL_INT3_MESSAGE(int3((signed int) f_c.x, (signed int) f_c.y, (signed int) f_c.z), i_c, "i_c");
+	TEST_ASSERT_EQUAL_INT3_MESSAGE(int3((signed int) f_d.x, (signed int) f_d.y, (signed int) f_d.z), i_d, "i_d");
 }
 
 void test_canCastFloat3ToUInt3() {
-	const pointF3_t f_a = float3( 1.0f,  2.0f,  3.0f);
-	const pointF3_t f_b = float3( 1.5f,  2.5f,  3.5f);
+	const pointF3_t f_a = float3(+1.0f, +2.0f, +3.0f);
+	const pointF3_t f_b = float3(+1.5f, +2.5f, +3.5f);
 	const pointF3_t f_c = float3(-1.0f, -2.0f, -3.0f);
 	const pointF3_t f_d = float3(-1.5f, -2.5f, -3.5f);
 	const pointU3_t u_a = toUInt(f_a);
@@ -414,23 +405,15 @@ void test_canCastFloat3ToUInt3() {
 	const pointU3_t u_c = toUInt(f_c);
 	const pointU3_t u_d = toUInt(f_d);
 
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE( 1, u_a.x, "u_a.x");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE( 2, u_a.y, "u_a.y");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE( 3, u_a.z, "u_a.z");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE( 1, u_b.x, "u_b.x");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE( 2, u_b.y, "u_b.y");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE( 3, u_b.z, "u_b.z");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE(-1, u_c.x, "u_c.x");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE(-2, u_c.y, "u_c.y");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE(-3, u_c.z, "u_c.z");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE(-1, u_d.x, "u_d.x");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE(-2, u_d.y, "u_d.y");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE(-3, u_d.z, "u_d.z");
+	TEST_ASSERT_EQUAL_UINT3_MESSAGE(uint3((unsigned int) f_a.x, (unsigned int) f_a.y, (signed int) f_a.z), u_a, "u_a");
+	TEST_ASSERT_EQUAL_UINT3_MESSAGE(uint3((unsigned int) f_b.x, (unsigned int) f_b.y, (signed int) f_b.z), u_b, "u_b");
+	TEST_ASSERT_EQUAL_UINT3_MESSAGE(uint3((unsigned int) f_c.x, (unsigned int) f_c.y, (signed int) f_c.z), u_c, "u_c");
+	TEST_ASSERT_EQUAL_UINT3_MESSAGE(uint3((unsigned int) f_d.x, (unsigned int) f_d.y, (signed int) f_d.z), u_d, "u_d");
 }
 
 void test_canCastSignedByteToUnsignedByte() {
-	const signed char a = 0;
-	const signed char b = 1;
+	const signed char a = +0;
+	const signed char b = +1;
 	const signed char c = -1;
 	const signed char d = INT8_MAX;
 	const signed char e = INT8_MIN;
@@ -443,8 +426,8 @@ void test_canCastSignedByteToUnsignedByte() {
 }
 
 void test_canCastByteToUnsignedByte() {
-	const char a = 0;
-	const char b = 1;
+	const char a = +0;
+	const char b = +1;
 	const char c = -1;
 	const char d = INT8_MAX;
 	const char e = INT8_MIN;
@@ -457,8 +440,8 @@ void test_canCastByteToUnsignedByte() {
 }
 
 void test_canCastSignedShortToUnsignedShort() {
-	const signed short a = 0;
-	const signed short b = 1;
+	const signed short a = +0;
+	const signed short b = +1;
 	const signed short c = -1;
 	const signed short d = INT16_MAX;
 	const signed short e = INT16_MIN;
@@ -471,8 +454,8 @@ void test_canCastSignedShortToUnsignedShort() {
 }
 
 void test_canCastSignedIntToUnsignedInt() {
-	const signed int a = 0;
-	const signed int b = 1;
+	const signed int a = +0;
+	const signed int b = +1;
 	const signed int c = -1;
 	const signed int d = INT32_MAX;
 	const signed int e = INT32_MIN;
@@ -485,8 +468,8 @@ void test_canCastSignedIntToUnsignedInt() {
 }
 
 void test_canCastSignedLongToUnsignedLong() {
-	const signed long a = 0;
-	const signed long b = 1;
+	const signed long a = +0;
+	const signed long b = +1;
 	const signed long c = -1;
 	const signed long d = (long) INT64_MAX;
 	const signed long e = (long) INT64_MIN;
@@ -499,8 +482,8 @@ void test_canCastSignedLongToUnsignedLong() {
 }
 
 void test_canCastSignedLongLongToUnsignedLongLong() {
-	const signed long long a = 0;
-	const signed long long b = 1;
+	const signed long long a = +0;
+	const signed long long b = +1;
 	const signed long long c = -1;
 	const signed long long d = INT64_MAX;
 	const signed long long e = INT64_MIN;
@@ -513,34 +496,28 @@ void test_canCastSignedLongLongToUnsignedLongLong() {
 }
 
 void test_canCastInt2ToUInt2() {
-	const pointI2_t i_a = int2(1, 2);
+	const pointI2_t i_a = int2(+1, +2);
 	const pointI2_t i_b = int2(-1, -2);
 	const pointU2_t u_a = toUnsigned(i_a);
 	const pointU2_t u_b = toUnsigned(i_b);
 
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE( 1, u_a.x, "u_a.x");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE( 2, u_a.y, "u_a.y");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE(-1, u_b.x, "u_b.x");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE(-2, u_b.y, "u_b.y");
+	TEST_ASSERT_EQUAL_UINT2_MESSAGE(uint2((unsigned int) i_a.x, (unsigned int) i_a.y), u_a, "u_a");
+	TEST_ASSERT_EQUAL_UINT2_MESSAGE(uint2((unsigned int) i_b.x, (unsigned int) i_b.y), u_b, "u_b");
 }
 
 void test_canCastInt3ToUInt3() {
-	const pointI3_t i_a = int3( 1,  2,  3);
+	const pointI3_t i_a = int3(+1, +2, +3);
 	const pointI3_t i_b = int3(-1, -2, -3);
 	const pointU3_t u_a = toUnsigned(i_a);
 	const pointU3_t u_b = toUnsigned(i_b);
 
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE( 1, u_a.x, "u_a.x");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE( 2, u_a.y, "u_a.y");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE( 3, u_a.z, "u_a.z");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE(-1, u_b.x, "u_b.x");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE(-2, u_b.y, "u_b.y");
-	TEST_ASSERT_EQUAL_UINT32_MESSAGE(-3, u_b.z, "u_b.z");
+	TEST_ASSERT_EQUAL_UINT3_MESSAGE(uint3((unsigned int) i_a.x, (unsigned int) i_a.y, (unsigned int) i_a.z), u_a, "u_a");
+	TEST_ASSERT_EQUAL_UINT3_MESSAGE(uint3((unsigned int) i_b.x, (unsigned int) i_b.y, (unsigned int) i_b.z), u_b, "u_b");
 }
 
 void test_canCastUnsignedByteToSignedByte() {
-	const unsigned char a = 0;
-	const unsigned char b = 1;
+	const unsigned char a = +0;
+	const unsigned char b = +1;
 	const unsigned char c = -1;
 	const unsigned char d = INT8_MAX;
 	const unsigned char e = INT8_MIN;
@@ -555,8 +532,8 @@ void test_canCastUnsignedByteToSignedByte() {
 }
 
 void test_canCastUnsignedShortToSignedShort() {
-	const unsigned short a = 0;
-	const unsigned short b = 1;
+	const unsigned short a = +0;
+	const unsigned short b = +1;
 	const unsigned short c = -1;
 	const unsigned short d = INT16_MAX;
 	const unsigned short e = INT16_MIN;
@@ -571,8 +548,8 @@ void test_canCastUnsignedShortToSignedShort() {
 }
 
 void test_canCastUnsignedIntToSignedInt() {
-	const unsigned int a = 0;
-	const unsigned int b = 1;
+	const unsigned int a = +0;
+	const unsigned int b = +1;
 	const unsigned int c = -1;
 	const unsigned int d = INT32_MAX;
 	const unsigned int e = INT32_MIN;
@@ -587,8 +564,8 @@ void test_canCastUnsignedIntToSignedInt() {
 }
 
 void test_canCastUnsignedLongToSignedLong() {
-	const unsigned long a = 0;
-	const unsigned long b = 1;
+	const unsigned long a = +0;
+	const unsigned long b = +1;
 	const unsigned long c = -1;
 	const unsigned long d = (long) INT64_MAX;
 	const unsigned long e = (long) INT64_MIN;
@@ -603,8 +580,8 @@ void test_canCastUnsignedLongToSignedLong() {
 }
 
 void test_canCastUnsignedLongLongToSignedLongLong() {
-	const unsigned long long a = 0;
-	const unsigned long long b = 1;
+	const unsigned long long a = +0;
+	const unsigned long long b = +1;
 	const unsigned long long c = -1;
 	const unsigned long long d = INT64_MAX;
 	const unsigned long long e = INT64_MIN;
@@ -622,22 +599,19 @@ void test_canCastUInt2ToInt2() {
 	const pointU2_t u_a = uint2(1, 2);
 	const pointI2_t i_a = toSigned(u_a);
 
-	TEST_ASSERT_EQUAL_INT32_MESSAGE(1, i_a.x, "i_a.x");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE(2, i_a.y, "i_a.y");
+	TEST_ASSERT_EQUAL_INT2(int2((signed int) u_a.x, (signed int) u_a.y), i_a);
 }
 
 void test_canCastUInt3ToInt3() {
 	const pointU3_t u_a = uint3(1, 2, 3);
 	const pointI3_t i_a = toSigned(u_a);
 
-	TEST_ASSERT_EQUAL_INT32_MESSAGE(1, i_a.x, "i_a.x");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE(2, i_a.y, "i_a.y");
-	TEST_ASSERT_EQUAL_INT32_MESSAGE(3, i_a.z, "i_a.z");
+	TEST_ASSERT_EQUAL_INT3(int3((signed int) u_a.x, (signed int) u_a.y, (signed int) u_a.z), i_a);
 }
 
 void test_canCastInt2ToString() {
-	const pointI2_t i_a = int2(0, 0);
-	const pointI2_t i_b = int2(1, 2);
+	const pointI2_t i_a = int2(+0, +0);
+	const pointI2_t i_b = int2(+1, +2);
 	const pointI2_t i_c = int2(-1, -2);
 	const pointI2_t i_d = int2(INT32_MAX, INT32_MIN);
 
@@ -648,8 +622,8 @@ void test_canCastInt2ToString() {
 }
 
 void test_canCastUInt2ToString() {
-	const pointU2_t u_a = uint2(0, 0);
-	const pointU2_t u_b = uint2(1, 2);
+	const pointU2_t u_a = uint2(+0, +0);
+	const pointU2_t u_b = uint2(+1, +2);
 	const pointU2_t u_c = uint2(-1, -2);
 	const pointU2_t u_d = uint2(INT32_MAX, INT32_MIN);
 	const pointU2_t u_e = uint2(UINT32_MAX, UINT32_MAX);
@@ -662,11 +636,11 @@ void test_canCastUInt2ToString() {
 }
 
 void test_canCastFloat2ToString() {
-	const pointF2_t f_a = float2(0.0f, 0.0f);
+	const pointF2_t f_a = float2(+0.0f, +0.0f);
 	const pointF2_t f_b = float2(-0.0f, -0.0f);
-	const pointF2_t f_c = float2(1.0f, 2.0f);
+	const pointF2_t f_c = float2(+1.0f, +2.0f);
 	const pointF2_t f_d = float2(-1.0f, -2.0f);
-	const pointF2_t f_e = float2(1.5f, 2.5f);
+	const pointF2_t f_e = float2(+1.5f, +2.5f);
 	const pointF2_t f_f = float2(-1.5f, -2.5f);
 	const pointF2_t f_g = float2(FLT_MIN, FLT_MAX);
 	const pointF2_t f_h = float2(HUGE_VALF, -HUGE_VALF);
@@ -684,8 +658,8 @@ void test_canCastFloat2ToString() {
 }
 
 void test_canCastInt3ToString() {
-	const pointI3_t i_a = int3(0, 0, 0);
-	const pointI3_t i_b = int3(1, 2, 3);
+	const pointI3_t i_a = int3(+0, +0, +0);
+	const pointI3_t i_b = int3(+1, +2, +3);
 	const pointI3_t i_c = int3(-1, -2, -3);
 	const pointI3_t i_d = int3(INT32_MAX, INT32_MIN, INT32_MAX);
 
@@ -696,8 +670,8 @@ void test_canCastInt3ToString() {
 }
 
 void test_canCastUInt3ToString() {
-	const pointU3_t u_a = uint3(0, 0, 0);
-	const pointU3_t u_b = uint3(1, 2, 3);
+	const pointU3_t u_a = uint3(+0, +0, +0);
+	const pointU3_t u_b = uint3(+1, +2, +3);
 	const pointU3_t u_c = uint3(-1, -2, -3);
 	const pointU3_t u_d = uint3(INT32_MAX, INT32_MIN, INT32_MAX);
 	const pointU3_t u_e = uint3(UINT32_MAX, UINT32_MAX, UINT32_MAX);
@@ -710,11 +684,11 @@ void test_canCastUInt3ToString() {
 }
 
 void test_canCastFloat3ToString() {
-	const pointF3_t f_a = float3(0.0f, 0.0f, 0.0f);
+	const pointF3_t f_a = float3(+0.0f, +0.0f, +0.0f);
 	const pointF3_t f_b = float3(-0.0f, -0.0f, -0.0f);
-	const pointF3_t f_c = float3(1.0f, 2.0f, 3.0f);
+	const pointF3_t f_c = float3(+1.0f, +2.0f, +3.0f);
 	const pointF3_t f_d = float3(-1.0f, -2.0f, -3.0f);
-	const pointF3_t f_e = float3(1.5f, 2.5f, 3.5f);
+	const pointF3_t f_e = float3(+1.5f, +2.5f, +3.5f);
 	const pointF3_t f_f = float3(-1.5f, -2.5f, -3.5f);
 	const pointF3_t f_g = float3(FLT_MIN, FLT_MAX, FLT_EPSILON);
 	const pointF3_t f_h = float3(HUGE_VALF, -HUGE_VALF, NAN);
