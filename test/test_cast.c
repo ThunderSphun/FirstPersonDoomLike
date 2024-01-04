@@ -4,9 +4,8 @@
 #include <float.h>
 
 // included to prevent compilation error in some cases
-void setUp(void) {}
-
-void tearDown(void) {}
+void setUp() {}
+void tearDown() {}
 
 void test_canCastWithoutPointIncluded() {
 	int i = 1;

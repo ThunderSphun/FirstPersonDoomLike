@@ -31,9 +31,14 @@ void handleAllEvents() {
 	}
 }
 
-bool registerQuitEvent(quitEvent event, void* param) {
+eventRegisterResponse_t registerQuitEvent(quitEvent event, void* param) {
+	if (!mouseEventsInitialized())
+		return EVENT_NOT_INITIALIZED;
+
+	bool hadEvent = quitEventStorage.event;
 	quitEventStorage.event = event;
 	quitEventStorage.params = param;
+	return hadEvent ? EVENT_OVERWRITTEN : EVENT_SUCCESS;
 }
 
 void unregisterQuitEvent() {

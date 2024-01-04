@@ -1,6 +1,6 @@
 #include "eventInternal.h"
 
-#define MAX_MOUSE_COUNT 0x200
+#define MAX_KEY_COUNT 0x200
 
 static struct {
 	keyEvent event;
@@ -21,45 +21,53 @@ struct keyEvent {
 struct keyEvent* keyEvents = NULL;
 
 void initKeyEvents() {
-	keyEvents = calloc(MAX_MOUSE_COUNT, sizeof(struct keyEvent));
+	keyEvents = calloc(MAX_KEY_COUNT, sizeof(struct keyEvent));
+
+	globalEventStorage.event = NULL;
+	globalEventStorage.params = NULL;
+	globalEventStorage.wasPressed = false;
 }
 
 void destroyKeyEvents() {
 	free(keyEvents);
 	keyEvents = NULL;
+
+	globalEventStorage.event = NULL;
+	globalEventStorage.params = NULL;
+	globalEventStorage.wasPressed = false;
 }
 
 bool keyEventsInitialized() {
-	return keyEvents != NULL;
+	return keyEvents != NULL && SDL_WasInit(SDL_INIT_EVENTS);
 }
 
-bool registerSingleKeyEvent(SDL_KeyCode keyCode, singleKeyEvent event, void* param) {
+eventRegisterResponse_t registerSingleKeyEvent(SDL_KeyCode keyCode, singleKeyEvent event, void* param) {
 	if (!keyEventsInitialized())
-		return false;
+		return EVENT_NOT_INITIALIZED;
 
-	struct keyEvent* keyEvent = &keyEvents[keyCode & (MAX_MOUSE_COUNT - 1)];
-	bool returnValue = keyEvent->event;
+	struct keyEvent* keyEvent = &keyEvents[keyCode & (MAX_KEY_COUNT - 1)];
+	bool hadEvent = keyEvent->event;
 
 	keyEvent->event = event;
 	keyEvent->params = param;
 	keyEvent->wasPressed = false;
 
-	return returnValue;
+	return hadEvent ? EVENT_OVERWRITTEN : EVENT_SUCCESS;
 }
 
-bool registerGlobalKeyEvents(keyEvent event, void* param) {
+eventRegisterResponse_t registerGlobalKeyEvents(keyEvent event, void* param) {
 	if (!keyEventsInitialized())
-		return false;
+		return EVENT_NOT_INITIALIZED;
 
-	bool returnValue = globalEventStorage.event;
+	bool hadEvent = globalEventStorage.event;
 	globalEventStorage.event = event;
 	globalEventStorage.params = param;
-	return returnValue;
+	return hadEvent ? EVENT_OVERWRITTEN : EVENT_SUCCESS;
 }
 
 void unregisterSingleKeyEvent(SDL_KeyCode keyCode) {
 	if (keyEventsInitialized()) {
-		struct keyEvent* keyEvent = &keyEvents[keyCode & (MAX_MOUSE_COUNT - 1)];
+		struct keyEvent* keyEvent = &keyEvents[keyCode & (MAX_KEY_COUNT - 1)];
 
 		keyEvent->event = NULL;
 		keyEvent->params = NULL;
@@ -76,10 +84,10 @@ void handleKeyEvent(SDL_Event event) {
 	if (!keyEventsInitialized())
 		return;
 
-	SDL_Keymod modifier = SDL_GetModState();
+	SDL_Keymod modifier = event.key.keysym.mod;
 
 	SDL_KeyCode keyCode = event.key.keysym.sym;
-	SDL_KeyCode mappedKeyCode = keyCode & (MAX_MOUSE_COUNT - 1);
+	SDL_KeyCode mappedKeyCode = keyCode & (MAX_KEY_COUNT - 1);
 	struct keyEvent* currentEvent = &keyEvents[mappedKeyCode];
 
 	if (event.type == SDL_KEYDOWN) {

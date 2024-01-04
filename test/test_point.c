@@ -3,8 +3,8 @@
 #include "unity_wrapper.h"
 
 // included to prevent compilation error in some cases
-void setUp(void) {}
-void tearDown(void) {}
+void setUp() {}
+void tearDown() {}
 
 void test_canConstructInt2() {
 	pointI2_t i_a = int2(1, 2);

@@ -41,3 +41,4 @@ endfunction()
 
 create_unit_test(testCast test/test_cast.c)
 create_unit_test(testPoint test/test_point.c)
+create_unit_test(testEvent test/test_event.c)

@@ -1,6 +1,6 @@
 #include "eventInternal.h"
 
-#define MAX_MOUSE_COUNT 5
+#define MAX_KEY_COUNT 5
 
 static struct {
 	mouseButtonEvent event;
@@ -32,7 +32,7 @@ struct mouseEvent {
 struct mouseEvent* mouseEvents = NULL;
 
 void initMouseEvents() {
-	mouseEvents = calloc(MAX_MOUSE_COUNT, sizeof(struct mouseEvent));
+	mouseEvents = calloc(MAX_KEY_COUNT, sizeof(struct mouseEvent));
 }
 
 void destroyMouseEvents() {
@@ -44,53 +44,55 @@ bool mouseEventsInitialized() {
 	return mouseEvents != NULL;
 }
 
-bool registerSingleMouseClickEvent(int mouseButton, singleMouseButtonEvent event, void* param) {
-	if (!keyEventsInitialized() || mouseButton >= MAX_MOUSE_COUNT)
-		return false;
+eventRegisterResponse_t registerSingleMouseClickEvent(int mouseButton, singleMouseButtonEvent event, void* param) {
+	if (!keyEventsInitialized())
+		return EVENT_NOT_INITIALIZED;
+	if (mouseButton >= MAX_KEY_COUNT)
+		return EVENT_INVALID_PARAMETER;
 
 	struct mouseEvent* mouseEvent = &mouseEvents[mouseButton];
-	bool returnValue = mouseEvent->event;
+	bool hadEvent = mouseEvent->event;
 
 	mouseEvent->event = event;
 	mouseEvent->params = param;
 	mouseEvent->wasPressed = false;
 
-	return returnValue;
+	return hadEvent ? EVENT_OVERWRITTEN : EVENT_SUCCESS;
 }
 
-bool registerGlobalMouseClickEvents(mouseButtonEvent event, void* param) {
+eventRegisterResponse_t registerGlobalMouseClickEvents(mouseButtonEvent event, void* param) {
 	if (!mouseEventsInitialized())
-		return false;
+		return EVENT_NOT_INITIALIZED;
 
-	bool returnValue = globalMousePressedEventStorage.event;
+	bool hadEvent = globalMousePressedEventStorage.event;
 	globalMousePressedEventStorage.event = event;
 	globalMousePressedEventStorage.params = param;
-	return returnValue;
+	return hadEvent ? EVENT_OVERWRITTEN : EVENT_SUCCESS;
 }
 
-bool registerMouseMoveEvent(mouseMoveEvent event, void* param) {
+eventRegisterResponse_t registerMouseMoveEvent(mouseMoveEvent event, void* param) {
 	if (!mouseEventsInitialized())
-		return false;
+		return EVENT_NOT_INITIALIZED;
 
-	bool returnValue = globalMousePressedEventStorage.event;
+	bool hadEvent = globalMousePressedEventStorage.event;
 	globalMouseMovedEventStorage.event = event;
 	globalMouseMovedEventStorage.params = param;
-	return returnValue;
+	return hadEvent ? EVENT_OVERWRITTEN : EVENT_SUCCESS;
 }
 
-bool registerMouseScrollEvent(mouseScrollEvent event, void* param) {
+eventRegisterResponse_t registerMouseScrollEvent(mouseScrollEvent event, void* param) {
 	if (!mouseEventsInitialized())
-		return false;
+		return EVENT_NOT_INITIALIZED;
 
-	bool returnValue = globalMousePressedEventStorage.event;
+	bool hadEvent = globalMousePressedEventStorage.event;
 	globalMouseScrolledEventStorage.event = event;
 	globalMouseScrolledEventStorage.params = param;
 	globalMouseMovedEventStorage.prevPos = getCurrentMousePos();
-	return returnValue;
+	return hadEvent ? EVENT_OVERWRITTEN : EVENT_SUCCESS;
 }
 
 void unregisterSingleMouseClickEvent(int mouseButton) {
-	if (keyEventsInitialized() && mouseButton < MAX_MOUSE_COUNT) {
+	if (keyEventsInitialized() && mouseButton < MAX_KEY_COUNT) {
 		struct mouseEvent* mouseEvent = &mouseEvents[mouseButton];
 
 		mouseEvent->event = NULL;
