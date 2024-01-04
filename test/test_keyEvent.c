@@ -316,6 +316,48 @@ void test_cancelledAnyKeyEventCanBeRestarted() {
 	TEST_ASSERT_EQUAL(2, i);
 }
 
+void test_singleKeyEventWorksWithKeyModifiers() {
+	int i = 0;
+	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerSingleKeyEvent(SDLK_a, singleKeyTakesIntReturnsFalse, &i), "registerEvent");
+
+	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_SHIFT);
+	handleAllEvents();
+	TEST_ASSERT_EQUAL(11, i);
+
+	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_NONE);
+	handleAllEvents();
+	TEST_ASSERT_EQUAL(12, i);
+
+	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_CTRL);
+	handleAllEvents();
+	TEST_ASSERT_EQUAL(113, i);
+
+	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_RCTRL | KMOD_LSHIFT);
+	handleAllEvents();
+	TEST_ASSERT_EQUAL(224, i);
+}
+
+void test_anyKeyEventWorksWithKeyModifiers() {
+	int i = 0;
+	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(anyKeyTakesIntReturnsFalse, &i), "registerEvent");
+
+	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_SHIFT);
+	handleAllEvents();
+	TEST_ASSERT_EQUAL(11, i);
+
+	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_NONE);
+	handleAllEvents();
+	TEST_ASSERT_EQUAL(12, i);
+
+	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_CTRL);
+	handleAllEvents();
+	TEST_ASSERT_EQUAL(113, i);
+
+	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_RCTRL | KMOD_LSHIFT);
+	handleAllEvents();
+	TEST_ASSERT_EQUAL(224, i);
+}
+
 int main() {
 	UNITY_BEGIN();
 
@@ -340,6 +382,8 @@ int main() {
 	RUN_TEST(test_anyKeyEventCanBeCancelled);
 	RUN_TEST(test_cancelledSingleKeyEventCanBeRestarted);
 	RUN_TEST(test_cancelledAnyKeyEventCanBeRestarted);
+	RUN_TEST(test_singleKeyEventWorksWithKeyModifiers);
+	RUN_TEST(test_anyKeyEventWorksWithKeyModifiers);
 
 	return UNITY_END();
 }

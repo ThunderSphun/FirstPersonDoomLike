@@ -5,13 +5,11 @@
 void setUp() {
 	if (!SDL_WasInit(SDL_INIT_EVENTS))
 		SDL_InitSubSystem(SDL_INIT_EVENTS);
-	initKeyEvents();
 	initMouseEvents();
 }
 
 void tearDown() {
 	destroyMouseEvents();
-	destroyKeyEvents();
 	if (SDL_WasInit(SDL_INIT_EVENTS))
 		SDL_QuitSubSystem(SDL_INIT_EVENTS);
 }
