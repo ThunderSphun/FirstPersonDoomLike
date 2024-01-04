@@ -19,10 +19,8 @@ bool shutdownFromESC(SDL_Keymod modifiers, void* param) {
 	return false;
 }
 
-bool shutdownFromQuit(void* param) {
+void shutdownFromQuit(void* param) {
 	*(bool*)param = false;
-
-	return true;
 }
 
 bool printKey(SDL_KeyCode keyCode, SDL_Keymod modifiers, void* param) {

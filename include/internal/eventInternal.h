@@ -4,6 +4,11 @@
 #include "event.h"
 
 #pragma region EVENT
+bool quitEventInitialized();
+void initQuitEvent();
+void destroyQuitEvent();
+void handleQuitEvent(SDL_Event event);
+
 #pragma region KEY_EVENT
 bool keyEventsInitialized();
 void initKeyEvents();

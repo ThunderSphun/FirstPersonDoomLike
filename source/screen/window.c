@@ -10,6 +10,8 @@ window_t createWindow(const char* title, int width, int height, SDL_WindowFlags 
 		initKeyEvents();
 	if (!mouseEventsInitialized())
 		initMouseEvents();
+	if (!quitEventInitialized())
+		initQuitEvent();
 
 	SDL_Window* window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, windowFlags);
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, rendererFlags);
@@ -17,6 +19,7 @@ window_t createWindow(const char* title, int width, int height, SDL_WindowFlags 
 }
 
 void destroyWindow(window_t window) {
+	destroyQuitEvent();
 	destroyKeyEvents();
 	destroyMouseEvents();
 

@@ -5,14 +5,15 @@ static struct {
 	void* params;
 } quitEventStorage;
 
+bool initialized = false;
+
 void handleAllEvents() {
 	static SDL_Event event;
 
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 			case SDL_QUIT: {
-				if (quitEventStorage.event)
-					quitEventStorage.event(quitEventStorage.params);
+				handleQuitEvent(event);
 				break;
 			}
 			case SDL_KEYDOWN:
@@ -31,8 +32,29 @@ void handleAllEvents() {
 	}
 }
 
+bool quitEventInitialized() {
+	return initialized && SDL_WasInit(SDL_INIT_EVENTS);
+}
+
+void initQuitEvent() {
+	quitEventStorage.event = NULL;
+	quitEventStorage.params = NULL;
+	initialized = true;
+}
+
+void destroyQuitEvent() {
+	quitEventStorage.event = NULL;
+	quitEventStorage.params = NULL;
+	initialized = false;
+}
+
+void handleQuitEvent(SDL_Event event) {
+	if (quitEventStorage.event)
+		quitEventStorage.event(quitEventStorage.params);
+}
+
 eventRegisterResponse_t registerQuitEvent(quitEvent event, void* param) {
-	if (!mouseEventsInitialized())
+	if (!quitEventInitialized())
 		return EVENT_NOT_INITIALIZED;
 
 	bool hadEvent = quitEventStorage.event;

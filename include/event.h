@@ -16,9 +16,8 @@ typedef enum {
 
 /**
  * An event callback for the event `SDL_QUIT`
- * @retval whether it should repeat
  */
-typedef bool (*quitEvent)(void* param);
+typedef void (*quitEvent)(void* param);
 
 void handleAllEvents();
 

@@ -10,6 +10,7 @@ void tearDown() {}
 void test_canCastWithoutPointIncluded() {
 	int i = 1;
 	toFloat(i);
+	TEST_PASS();
 }
 
 #include "point.h"
@@ -20,6 +21,7 @@ void test_canCastWithPointIncluded() {
 
 	pointI3_t i3 = int3(1, 2, 3);
 	toFloat(i3);
+	TEST_PASS();
 }
 
 void test_canCastSignedByteToFloat() {

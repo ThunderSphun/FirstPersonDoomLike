@@ -1,6 +1,6 @@
 #include "eventInternal.h"
 
-#define MAX_KEY_COUNT 5
+#define MAX_MOUSE_COUNT 5
 
 static struct {
 	mouseButtonEvent event;
@@ -32,7 +32,7 @@ struct mouseEvent {
 struct mouseEvent* mouseEvents = NULL;
 
 void initMouseEvents() {
-	mouseEvents = calloc(MAX_KEY_COUNT, sizeof(struct mouseEvent));
+	mouseEvents = calloc(MAX_MOUSE_COUNT, sizeof(struct mouseEvent));
 }
 
 void destroyMouseEvents() {
@@ -41,13 +41,13 @@ void destroyMouseEvents() {
 }
 
 bool mouseEventsInitialized() {
-	return mouseEvents != NULL;
+	return mouseEvents != NULL && SDL_WasInit(SDL_INIT_EVENTS);
 }
 
 eventRegisterResponse_t registerSingleMouseClickEvent(int mouseButton, singleMouseButtonEvent event, void* param) {
-	if (!keyEventsInitialized())
+	if (!mouseEventsInitialized())
 		return EVENT_NOT_INITIALIZED;
-	if (mouseButton >= MAX_KEY_COUNT)
+	if (mouseButton >= MAX_MOUSE_COUNT)
 		return EVENT_INVALID_PARAMETER;
 
 	struct mouseEvent* mouseEvent = &mouseEvents[mouseButton];
@@ -92,7 +92,7 @@ eventRegisterResponse_t registerMouseScrollEvent(mouseScrollEvent event, void* p
 }
 
 void unregisterSingleMouseClickEvent(int mouseButton) {
-	if (keyEventsInitialized() && mouseButton < MAX_KEY_COUNT) {
+	if (mouseEventsInitialized() && mouseButton < MAX_MOUSE_COUNT) {
 		struct mouseEvent* mouseEvent = &mouseEvents[mouseButton];
 
 		mouseEvent->event = NULL;

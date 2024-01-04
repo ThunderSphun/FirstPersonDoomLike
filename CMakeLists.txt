@@ -41,4 +41,6 @@ endfunction()
 
 create_unit_test(testCast test/test_cast.c)
 create_unit_test(testPoint test/test_point.c)
+create_unit_test(testKeyEvent test/test_keyEvent.c)
+create_unit_test(testMouseEvent test/test_mouseEvent.c)
 create_unit_test(testEvent test/test_event.c)
