@@ -8,6 +8,12 @@ void setUp() {
 	if (!SDL_WasInit(SDL_INIT_EVENTS))
 		SDL_InitSubSystem(SDL_INIT_EVENTS);
 	initMouseEvents();
+
+	SDL_WarpMouseInWindow(testAppWindow, 0, 0); // reset mouse pos
+
+	// clear event queue for potential contamination of events
+	SDL_Event event;
+	while (SDL_PollEvent(&event)) {};
 }
 
 void tearDown() {
@@ -482,12 +488,27 @@ void test_moveEventGetsMoveToPassedIn() {
 	TEST_ASSERT_EQUAL_INT2(int2(2, 2), points[1]);
 }
 
+void test_getCurrentMousePosReturnsCurrentMousePos() {
+	SDL_WarpMouseInWindow(testAppWindow, 1, 1);
+	TEST_ASSERT_EQUAL_INT2(int2(1, 1), getCurrentMousePos());
+
+	SDL_WarpMouseInWindow(testAppWindow, 2, 2);
+	TEST_ASSERT_EQUAL_INT2(int2(2, 2), getCurrentMousePos());
+
+	SDL_WarpMouseInWindow(testAppWindow, 0, 1);
+	TEST_ASSERT_EQUAL_INT2(int2(0, 1), getCurrentMousePos());
+
+	SDL_WarpMouseInWindow(testAppWindow, 1, 2);
+	TEST_ASSERT_EQUAL_INT2(int2(1, 2), getCurrentMousePos());
+}
+
 int main() {
 	UNITY_BEGIN();
 
+	// create window
 	testAppWindow = SDL_CreateWindow("test program ! DO NOT CLOSE !", 0, 0, 5, 5, SDL_WINDOW_BORDERLESS | SDL_WINDOW_MINIMIZED);
 	pointI2_t storedMousePos = int2(0, 0);
-	SDL_GetGlobalMouseState(&storedMousePos.x, &storedMousePos.y);
+	SDL_GetGlobalMouseState(&storedMousePos.x, &storedMousePos.y); // store mouse position for restore after tests
 
 	RUN_TEST(test_canHandleNoEventAttached);
 	RUN_TEST(test_registeredSinglePressEventCanBeCalled);
@@ -524,6 +545,7 @@ int main() {
 	RUN_TEST(test_singlePressOnNoneCanListenToOtherButtonRelease);
 	RUN_TEST(test_moveEventGetsMoveFromPassedIn);
 	RUN_TEST(test_moveEventGetsMoveToPassedIn);
+	RUN_TEST(test_getCurrentMousePosReturnsCurrentMousePos);
 
 	SDL_WarpMouseGlobal(storedMousePos.x, storedMousePos.y); // restore mouse position to before test
 	SDL_DestroyWindow(testAppWindow); // clean up window
