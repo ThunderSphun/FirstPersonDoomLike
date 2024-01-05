@@ -2,6 +2,8 @@
 
 #include "unity_wrapper.h"
 
+SDL_Window* testAppWindow;
+
 void setUp() {
 	if (!SDL_WasInit(SDL_INIT_EVENTS))
 		SDL_InitSubSystem(SDL_INIT_EVENTS);
@@ -31,12 +33,7 @@ void pushMouseUpEvent(int button) {
 }
 
 void pushMoveMouseEvent(pointI2_t moveTo) {
-	SDL_Event moveEvent;
-	moveEvent.type = SDL_MOUSEMOTION;
-	moveEvent.motion.x = moveTo.x;
-	moveEvent.motion.y = moveTo.y;
-
-	SDL_PushEvent(&moveEvent);
+	SDL_WarpMouseInWindow(testAppWindow, moveTo.x, moveTo.y);
 }
 
 void pushScrollMouseEvent(float amount) {
@@ -456,8 +453,6 @@ void test_singlePressOnNoneCanListenToOtherButtonRelease() {
 }
 
 void test_moveEventGetsMoveFromPassedIn() {
-	TEST_IGNORE_MESSAGE("Need a way to mock mouse position");
-
 	pointI2_t points[2];
 	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerMouseMoveEvent(moveTakesInt2Arr, points), "registerEvent");
 
@@ -471,8 +466,6 @@ void test_moveEventGetsMoveFromPassedIn() {
 }
 
 void test_moveEventGetsMoveToPassedIn() {
-	TEST_IGNORE_MESSAGE("Need a way to mock mouse position");
-
 	pointI2_t points[2];
 	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerMouseMoveEvent(moveTakesInt2Arr, points), "registerEvent");
 
@@ -491,6 +484,10 @@ void test_moveEventGetsMoveToPassedIn() {
 
 int main() {
 	UNITY_BEGIN();
+
+	testAppWindow = SDL_CreateWindow("test program ! DO NOT CLOSE !", 0, 0, 5, 5, SDL_WINDOW_BORDERLESS | SDL_WINDOW_MINIMIZED);
+	pointI2_t storedMousePos = int2(0, 0);
+	SDL_GetGlobalMouseState(&storedMousePos.x, &storedMousePos.y);
 
 	RUN_TEST(test_canHandleNoEventAttached);
 	RUN_TEST(test_registeredSinglePressEventCanBeCalled);
@@ -527,6 +524,9 @@ int main() {
 	RUN_TEST(test_singlePressOnNoneCanListenToOtherButtonRelease);
 	RUN_TEST(test_moveEventGetsMoveFromPassedIn);
 	RUN_TEST(test_moveEventGetsMoveToPassedIn);
+
+	SDL_WarpMouseGlobal(storedMousePos.x, storedMousePos.y); // restore mouse position to before test
+	SDL_DestroyWindow(testAppWindow); // clean up window
 
 	return UNITY_END();
 }
