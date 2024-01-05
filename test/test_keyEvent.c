@@ -40,7 +40,7 @@ bool singleKeyTakesIntReturnsTrue(SDL_Keymod modifiers, void* param) {
 	(*(int*) param) += (modifiers & KMOD_CTRL) ? 100 : 0;
 	return true;
 }
-bool anyKeyTakesIntReturnsTrue(SDL_KeyCode keyCode, SDL_Keymod modifiers, void* param) {
+bool globalKeyTakesIntReturnsTrue(SDL_KeyCode keyCode, SDL_Keymod modifiers, void* param) {
 	(*(int*) param)++;
 	(*(int*) param) += (modifiers & KMOD_SHIFT) ? 10 : 0;
 	(*(int*) param) += (modifiers & KMOD_CTRL) ? 100 : 0;
@@ -52,16 +52,16 @@ bool singleKeyTakesIntReturnsFalse(SDL_Keymod modifiers, void* param) {
 	(*(int*) param) += (modifiers & KMOD_CTRL) ? 100 : 0;
 	return false;
 }
-bool anyKeyTakesIntReturnsFalse(SDL_KeyCode keyCode, SDL_Keymod modifiers, void* param) {
+bool globalKeyTakesIntReturnsFalse(SDL_KeyCode keyCode, SDL_Keymod modifiers, void* param) {
 	(*(int*) param)++;
 	(*(int*) param) += (modifiers & KMOD_SHIFT) ? 10 : 0;
 	(*(int*) param) += (modifiers & KMOD_CTRL) ? 100 : 0;
 	return false;
 }
 bool singleKeyTakesNullReturnsTrue(SDL_Keymod modifiers, void* param) { return true; }
-bool anyKeyTakesNullReturnsTrue(SDL_KeyCode keyCode, SDL_Keymod modifiers, void* param) { return true; }
+bool globalKeyTakesNullReturnsTrue(SDL_KeyCode keyCode, SDL_Keymod modifiers, void* param) { return true; }
 bool singleKeyTakesNullReturnsFalse(SDL_Keymod modifiers, void* param) { return false; }
-bool anyKeyTakesNullReturnsFalse(SDL_KeyCode keyCode, SDL_Keymod modifiers, void* param) { return false; }
+bool globalKeyTakesNullReturnsFalse(SDL_KeyCode keyCode, SDL_Keymod modifiers, void* param) { return false; }
 
 void test_canHandleNoEventAttached() {
 	handleAllEvents();
@@ -76,8 +76,8 @@ void test_registeredSingleKeyEventCanBeCalled() {
 	TEST_PASS();
 }
 
-void test_registeredAnyKeyEventCanBeCalled() {
-	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(anyKeyTakesNullReturnsTrue, NULL), "registerEvent");
+void test_registeredGlobalKeyEventCanBeCalled() {
+	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(globalKeyTakesNullReturnsTrue, NULL), "registerEvent");
 	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_NONE);
 	pushKeyDownEvent(SDLK_b, SDL_SCANCODE_A, KMOD_NONE);
 	handleAllEvents();
@@ -94,9 +94,9 @@ void test_unregisteredSingleKeyEventCantBeCalled() {
 	TEST_ASSERT_EQUAL(0, i);
 }
 
-void test_unregisteredAnyKeyEventCantBeCalled() {
+void test_unregisteredGlobalKeyEventCantBeCalled() {
 	int i = 0;
-	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(anyKeyTakesIntReturnsTrue, &i), "registerEvent");
+	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(globalKeyTakesIntReturnsTrue, &i), "registerEvent");
 	unregisterGlobalKeyEvents();
 	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_NONE);
 	pushKeyDownEvent(SDLK_b, SDL_SCANCODE_A, KMOD_NONE);
@@ -104,36 +104,30 @@ void test_unregisteredAnyKeyEventCantBeCalled() {
 	TEST_ASSERT_EQUAL(0, i);
 }
 
-void test_registeredSingleKeyEventCantBeCalledWithoutEventsEnabled() {
+void test_keyEventCantBeCalledWithoutEventsEnabled() {
 	if (SDL_WasInit(SDL_INIT_EVENTS))
 		SDL_QuitSubSystem(SDL_INIT_EVENTS);
 
 	TEST_ASSERT_EQUAL(EVENT_NOT_INITIALIZED, registerSingleKeyEvent(SDLK_a, singleKeyTakesNullReturnsTrue, NULL));
-}
-
-void test_registeredAnyKeyEventCantBeCalledWithoutEventsEnabled() {
-	if (SDL_WasInit(SDL_INIT_EVENTS))
-		SDL_QuitSubSystem(SDL_INIT_EVENTS);
-
-	TEST_ASSERT_EQUAL(EVENT_NOT_INITIALIZED, registerGlobalKeyEvents(anyKeyTakesNullReturnsTrue, NULL));
+	TEST_ASSERT_EQUAL(EVENT_NOT_INITIALIZED, registerGlobalKeyEvents(globalKeyTakesNullReturnsTrue, NULL));
 }
 
 void test_keyEventInitWillClearStoredData() {
 	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerSingleKeyEvent(SDLK_a, singleKeyTakesNullReturnsTrue, NULL), "single 1");
-	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(anyKeyTakesNullReturnsTrue, NULL), "global 1");
+	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(globalKeyTakesNullReturnsTrue, NULL), "global 1");
 	initKeyEvents();
 
 	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerSingleKeyEvent(SDLK_a, singleKeyTakesNullReturnsTrue, NULL), "single 2");
-	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(anyKeyTakesNullReturnsTrue, NULL), "global 2");
+	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(globalKeyTakesNullReturnsTrue, NULL), "global 2");
 }
 
 void test_keyEventsCannotBeAddedWhenDestroyed() {
 	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerSingleKeyEvent(SDLK_a, singleKeyTakesNullReturnsTrue, NULL), "single 1");
-	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(anyKeyTakesNullReturnsTrue, NULL), "global 1");
+	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(globalKeyTakesNullReturnsTrue, NULL), "global 1");
 	destroyKeyEvents();
 
 	TEST_ASSERT_EQUAL_MESSAGE(EVENT_NOT_INITIALIZED, registerSingleKeyEvent(SDLK_a, singleKeyTakesNullReturnsTrue, NULL), "single 2");
-	TEST_ASSERT_EQUAL_MESSAGE(EVENT_NOT_INITIALIZED, registerGlobalKeyEvents(anyKeyTakesNullReturnsTrue, NULL), "global 2");
+	TEST_ASSERT_EQUAL_MESSAGE(EVENT_NOT_INITIALIZED, registerGlobalKeyEvents(globalKeyTakesNullReturnsTrue, NULL), "global 2");
 }
 
 void test_singleKeyEventParameterHasInfluenceOutsideCallback() {
@@ -149,9 +143,9 @@ void test_singleKeyEventParameterHasInfluenceOutsideCallback() {
 	TEST_ASSERT_EQUAL(2, i);
 }
 
-void test_anyKeyEventParameterHasInfluenceOutsideCallback() {
+void test_globalKeyEventParameterHasInfluenceOutsideCallback() {
 	int i = 0;
-	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(anyKeyTakesIntReturnsFalse, &i), "registerEvent");
+	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(globalKeyTakesIntReturnsFalse, &i), "registerEvent");
 
 	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_NONE);
 	handleAllEvents();
@@ -166,12 +160,12 @@ void test_anyKeyEventParameterHasInfluenceOutsideCallback() {
 	TEST_ASSERT_EQUAL(3, i);
 }
 
-void test_anyKeyEventTakesPriorityOverSingleKeyEvent() {
+void test_globalKeyEventTakesPriorityOverSingleKeyEvent() {
 	int i = 0;
 	int j = 0;
 
 	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerSingleKeyEvent(SDLK_a, singleKeyTakesIntReturnsTrue, &i), "single");
-	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(anyKeyTakesIntReturnsTrue, &j), "global");
+	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(globalKeyTakesIntReturnsTrue, &j), "global");
 
 	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_NONE);
 	handleAllEvents();
@@ -261,9 +255,9 @@ void test_singleKeyEventCanBeCalledMultipleTimes() {
 	TEST_ASSERT_EQUAL(4, i);
 }
 
-void test_anyKeyEventCanBeCalledMultipleTimes() {
+void test_globalKeyEventCanBeCalledMultipleTimes() {
 	int i = 0;
-	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(anyKeyTakesIntReturnsFalse, &i), "registerEvent");
+	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(globalKeyTakesIntReturnsFalse, &i), "registerEvent");
 	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_NONE);
 	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_NONE);
 	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_NONE);
@@ -283,9 +277,9 @@ void test_singleKeyEventCanBeCancelled() {
 	TEST_ASSERT_EQUAL(1, i);
 }
 
-void test_anyKeyEventCanBeCancelled() {
+void test_globalKeyEventCanBeCancelled() {
 	int i = 0;
-	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(anyKeyTakesIntReturnsTrue, &i), "registerEvent");
+	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(globalKeyTakesIntReturnsTrue, &i), "registerEvent");
 	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_NONE);
 	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_NONE);
 	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_NONE);
@@ -305,9 +299,9 @@ void test_cancelledSingleKeyEventCanBeRestarted() {
 	TEST_ASSERT_EQUAL(2, i);
 }
 
-void test_cancelledAnyKeyEventCanBeRestarted() {
+void test_cancelledGlobalKeyEventCanBeRestarted() {
 	int i = 0;
-	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(anyKeyTakesIntReturnsTrue, &i), "registerEvent");
+	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(globalKeyTakesIntReturnsTrue, &i), "registerEvent");
 	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_NONE);
 	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_NONE);
 	pushKeyUpEvent(SDLK_a, SDL_SCANCODE_A, KMOD_NONE);
@@ -337,9 +331,9 @@ void test_singleKeyEventWorksWithKeyModifiers() {
 	TEST_ASSERT_EQUAL(224, i);
 }
 
-void test_anyKeyEventWorksWithKeyModifiers() {
+void test_globalKeyEventWorksWithKeyModifiers() {
 	int i = 0;
-	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(anyKeyTakesIntReturnsFalse, &i), "registerEvent");
+	TEST_ASSERT_EQUAL_MESSAGE(EVENT_SUCCESS, registerGlobalKeyEvents(globalKeyTakesIntReturnsFalse, &i), "registerEvent");
 
 	pushKeyDownEvent(SDLK_a, SDL_SCANCODE_A, KMOD_SHIFT);
 	handleAllEvents();
@@ -363,27 +357,26 @@ int main() {
 
 	RUN_TEST(test_canHandleNoEventAttached);
 	RUN_TEST(test_registeredSingleKeyEventCanBeCalled);
-	RUN_TEST(test_registeredAnyKeyEventCanBeCalled);
+	RUN_TEST(test_registeredGlobalKeyEventCanBeCalled);
 	RUN_TEST(test_unregisteredSingleKeyEventCantBeCalled);
-	RUN_TEST(test_unregisteredAnyKeyEventCantBeCalled);
-	RUN_TEST(test_registeredSingleKeyEventCantBeCalledWithoutEventsEnabled);
-	RUN_TEST(test_registeredAnyKeyEventCantBeCalledWithoutEventsEnabled);
+	RUN_TEST(test_unregisteredGlobalKeyEventCantBeCalled);
+	RUN_TEST(test_keyEventCantBeCalledWithoutEventsEnabled);
 	RUN_TEST(test_keyEventInitWillClearStoredData);
 	RUN_TEST(test_keyEventsCannotBeAddedWhenDestroyed);
 	RUN_TEST(test_singleKeyEventParameterHasInfluenceOutsideCallback);
-	RUN_TEST(test_anyKeyEventParameterHasInfluenceOutsideCallback);
-	RUN_TEST(test_anyKeyEventTakesPriorityOverSingleKeyEvent);
+	RUN_TEST(test_globalKeyEventParameterHasInfluenceOutsideCallback);
+	RUN_TEST(test_globalKeyEventTakesPriorityOverSingleKeyEvent);
 	RUN_TEST(test_singleKeyEventOnlyWorksOnThatKey);
 	RUN_TEST(test_singleKeyEventCanHaveMultipleKeysRegistered);
 	RUN_TEST(test_singleKeyEventCanHaveSomeKeysUnregistered);
 	RUN_TEST(test_singleKeyEventCanBeCalledMultipleTimes);
-	RUN_TEST(test_anyKeyEventCanBeCalledMultipleTimes);
+	RUN_TEST(test_globalKeyEventCanBeCalledMultipleTimes);
 	RUN_TEST(test_singleKeyEventCanBeCancelled);
-	RUN_TEST(test_anyKeyEventCanBeCancelled);
+	RUN_TEST(test_globalKeyEventCanBeCancelled);
 	RUN_TEST(test_cancelledSingleKeyEventCanBeRestarted);
-	RUN_TEST(test_cancelledAnyKeyEventCanBeRestarted);
+	RUN_TEST(test_cancelledGlobalKeyEventCanBeRestarted);
 	RUN_TEST(test_singleKeyEventWorksWithKeyModifiers);
-	RUN_TEST(test_anyKeyEventWorksWithKeyModifiers);
+	RUN_TEST(test_globalKeyEventWorksWithKeyModifiers);
 
 	return UNITY_END();
 }

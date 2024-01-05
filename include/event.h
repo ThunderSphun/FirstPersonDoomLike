@@ -91,7 +91,7 @@ typedef void (*mouseMoveEvent)(pointI2_t from, pointI2_t to, void* param);
  */
 typedef void (*mouseScrollEvent)(float amount, void * param);
 
-eventRegisterResponse_t registerSingleMouseClickEvent(int mouseButton, singleMouseButtonEvent event, void* param);
+eventRegisterResponse_t registerSingleMouseClickEvent(unsigned char mouseButton, singleMouseButtonEvent event, void* param);
 eventRegisterResponse_t registerGlobalMouseClickEvents(mouseButtonEvent event, void* param);
 eventRegisterResponse_t registerMouseMoveEvent(mouseMoveEvent event, void* param);
 eventRegisterResponse_t registerMouseScrollEvent(mouseScrollEvent event, void* param);

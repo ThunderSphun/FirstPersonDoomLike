@@ -1,6 +1,6 @@
 #include "eventInternal.h"
 
-#define MAX_MOUSE_COUNT 5
+#define MAX_MOUSE_COUNT 6
 
 static struct {
 	mouseButtonEvent event;
@@ -33,20 +33,43 @@ struct mouseEvent* mouseEvents = NULL;
 
 void initMouseEvents() {
 	mouseEvents = calloc(MAX_MOUSE_COUNT, sizeof(struct mouseEvent));
+
+	globalMousePressedEventStorage.event = NULL;
+	globalMousePressedEventStorage.params = NULL;
+	globalMousePressedEventStorage.wasPressed = false;
+
+	globalMouseMovedEventStorage.event = NULL;
+	globalMouseMovedEventStorage.prevPos = int2(0, 0);
+	globalMouseMovedEventStorage.params = NULL;
+
+	globalMouseScrolledEventStorage.event = NULL;
+	globalMouseScrolledEventStorage.params = NULL;
 }
 
 void destroyMouseEvents() {
 	free(mouseEvents);
 	mouseEvents = NULL;
+
+	globalMousePressedEventStorage.event = NULL;
+	globalMousePressedEventStorage.params = NULL;
+	globalMousePressedEventStorage.wasPressed = false;
+
+	globalMouseMovedEventStorage.event = NULL;
+	globalMouseMovedEventStorage.params = NULL;
+
+	globalMouseScrolledEventStorage.event = NULL;
+	globalMouseScrolledEventStorage.params = NULL;
 }
 
 bool mouseEventsInitialized() {
 	return mouseEvents != NULL && SDL_WasInit(SDL_INIT_EVENTS);
 }
 
-eventRegisterResponse_t registerSingleMouseClickEvent(int mouseButton, singleMouseButtonEvent event, void* param) {
+eventRegisterResponse_t
+registerSingleMouseClickEvent(unsigned char mouseButton, singleMouseButtonEvent event, void* param) {
 	if (!mouseEventsInitialized())
 		return EVENT_NOT_INITIALIZED;
+	mouseButton--; // SDL_BUTTON variables are 1-6, needs to be zero based
 	if (mouseButton >= MAX_MOUSE_COUNT)
 		return EVENT_INVALID_PARAMETER;
 
@@ -74,7 +97,7 @@ eventRegisterResponse_t registerMouseMoveEvent(mouseMoveEvent event, void* param
 	if (!mouseEventsInitialized())
 		return EVENT_NOT_INITIALIZED;
 
-	bool hadEvent = globalMousePressedEventStorage.event;
+	bool hadEvent = globalMouseMovedEventStorage.event;
 	globalMouseMovedEventStorage.event = event;
 	globalMouseMovedEventStorage.params = param;
 	return hadEvent ? EVENT_OVERWRITTEN : EVENT_SUCCESS;
@@ -84,7 +107,7 @@ eventRegisterResponse_t registerMouseScrollEvent(mouseScrollEvent event, void* p
 	if (!mouseEventsInitialized())
 		return EVENT_NOT_INITIALIZED;
 
-	bool hadEvent = globalMousePressedEventStorage.event;
+	bool hadEvent = globalMouseScrolledEventStorage.event;
 	globalMouseScrolledEventStorage.event = event;
 	globalMouseScrolledEventStorage.params = param;
 	globalMouseMovedEventStorage.prevPos = getCurrentMousePos();
@@ -92,6 +115,7 @@ eventRegisterResponse_t registerMouseScrollEvent(mouseScrollEvent event, void* p
 }
 
 void unregisterSingleMouseClickEvent(int mouseButton) {
+	mouseButton--; // SDL_BUTTON variables are 1-6, needs to be zero based
 	if (mouseEventsInitialized() && mouseButton < MAX_MOUSE_COUNT) {
 		struct mouseEvent* mouseEvent = &mouseEvents[mouseButton];
 
@@ -123,14 +147,14 @@ void handleMouseEvent(SDL_Event event) {
 		return;
 
 	int button = event.button.button;
-	struct mouseEvent* currentEvent = &mouseEvents[button];
+	struct mouseEvent* currentEvent = &mouseEvents[button - 1];
 
 	switch (event.type) {
 		case SDL_MOUSEBUTTONDOWN: {
 			if (globalMousePressedEventStorage.event) {
 				if (!globalMousePressedEventStorage.wasPressed)
-					globalMousePressedEventStorage.wasPressed =
-							globalMousePressedEventStorage.event(button, globalMousePressedEventStorage.params);
+					globalMousePressedEventStorage.wasPressed = globalMousePressedEventStorage.event(button,
+																									 globalMousePressedEventStorage.params);
 			} else if (currentEvent->event) {
 				if (!currentEvent->wasPressed)
 					currentEvent->wasPressed = currentEvent->event(currentEvent->params);
@@ -138,21 +162,27 @@ void handleMouseEvent(SDL_Event event) {
 			break;
 		}
 		case SDL_MOUSEBUTTONUP: {
-			if (globalMousePressedEventStorage.wasPressed) {
+			if (globalMousePressedEventStorage.event) {
 				globalMousePressedEventStorage.event(SDL_BUTTON_NONE, globalMousePressedEventStorage.params);
 				globalMousePressedEventStorage.wasPressed = false;
+			} else {
+				if (currentEvent->event) {
+					currentEvent->wasPressed = false;
+				} else if (button != SDL_BUTTON_NONE) {
+					// SDL_BUTTON_NONE is a custom button and is not naturally supported by SDL
+					// Mimicking release behaviour as a press of button SDL_BUTTON_NONE
+					handleMouseEvent((SDL_Event) {
+						.button.type = SDL_MOUSEBUTTONDOWN,
+						.button.button = SDL_BUTTON_NONE});
+				}
 			}
-			else if (currentEvent->event)
-				currentEvent->wasPressed = false;
 			break;
 		}
 		case SDL_MOUSEMOTION: {
 			pointI2_t currentPos = getCurrentMousePos();
 			if (globalMouseMovedEventStorage.event)
-				globalMouseMovedEventStorage.event(
-						globalMouseMovedEventStorage.prevPos,
-						currentPos,
-						globalMouseMovedEventStorage.params);
+				globalMouseMovedEventStorage.event(globalMouseMovedEventStorage.prevPos, currentPos,
+												   globalMouseMovedEventStorage.params);
 			globalMouseMovedEventStorage.prevPos = currentPos;
 			break;
 		}
