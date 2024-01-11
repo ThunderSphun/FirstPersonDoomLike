@@ -7,9 +7,9 @@ set(CMAKE_C_STANDARD 99)
 add_subdirectory(lib/SDL2)
 
 set(SOURCE_FILES
-		source/math/point.c
-		source/screen/window.c
-			source/screen/event/event.c source/screen/event/keyEvent.c source/screen/event/mouseEvent.c)
+		source/engine/math/point.c
+		source/engine/screen/window.c
+		source/engine/screen/event/event.c source/engine/screen/event/keyEvent.c source/engine/screen/event/mouseEvent.c)
 
 include_directories(include)
 include_directories(include/internal)
@@ -44,3 +44,4 @@ create_unit_test(testPoint test/test_point.c)
 create_unit_test(testKeyEvent test/test_keyEvent.c)
 create_unit_test(testMouseEvent test/test_mouseEvent.c)
 create_unit_test(testEvent test/test_event.c)
+create_unit_test(testWindow test/test_window.c)

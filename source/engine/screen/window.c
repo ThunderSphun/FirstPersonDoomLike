@@ -14,17 +14,23 @@ window_t createWindow(const char* title, int width, int height, SDL_WindowFlags 
 		initQuitEvent();
 
 	SDL_Window* window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, windowFlags);
-	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, rendererFlags);
-	return (window_t) {.window = window, .renderer = renderer};
+	SDL_Renderer* gameRenderer = SDL_CreateRenderer(window, -1, rendererFlags);
+	return (window_t) {
+		.window = window,
+		.gameRenderer = gameRenderer
+	};
 }
 
-void destroyWindow(window_t window) {
+void destroyWindow(window_t* window) {
 	destroyQuitEvent();
 	destroyKeyEvents();
 	destroyMouseEvents();
 
-	SDL_DestroyRenderer(window.renderer);
-	SDL_DestroyWindow(window.window);
+	SDL_DestroyRenderer(window->gameRenderer);
+	SDL_DestroyWindow(window->window);
 
 	SDL_Quit();
+
+	window->window = NULL;
+	window->gameRenderer = NULL;
 }

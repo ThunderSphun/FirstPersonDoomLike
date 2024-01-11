@@ -73,7 +73,7 @@ void printScroll(float amount, void* param) {
 
 int main() {
 	window_t window = createWindow("New Screen", 720, 480, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-	SDL_SetRenderTarget(window.renderer, NULL);
+	SDL_SetRenderTarget(window.gameRenderer, NULL);
 
 	bool running = true;
 
@@ -93,11 +93,11 @@ int main() {
 		handleAllEvents();
 		SDL_UpdateWindowSurface(window.window);
 
-		SDL_RenderClear(window.renderer);
-		SDL_RenderPresent(window.renderer);
+		SDL_RenderClear(window.gameRenderer);
+		SDL_RenderPresent(window.gameRenderer);
 	}
 
-	destroyWindow(window);
+	destroyWindow(&window);
 
 	return 0;
 }
